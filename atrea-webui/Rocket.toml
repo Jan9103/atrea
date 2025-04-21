@@ -1,0 +1,2 @@
+[default.databases.atrea_db]
+url = "atrea_db.sqlite"

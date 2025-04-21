@@ -1,0 +1,17 @@
+[package]
+name = "atrea-webui"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+fastrand = "2.3.0"
+
+[dependencies.rocket]
+version = "0.5.1"
+default-features = false
+features = ["json"]
+
+[dependencies.rocket_db_pools]
+version = "0.2.0"
+default-features = false
+features = ["sqlx_sqlite"]

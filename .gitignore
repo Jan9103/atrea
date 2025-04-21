@@ -1,0 +1,4 @@
+*.sqlite
+*.back
+/collected_data/
+/liked_channels.txt
