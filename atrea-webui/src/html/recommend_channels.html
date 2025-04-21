@@ -5,7 +5,7 @@
     <link rel="stylesheet" href="./style.css">
     <script src="recommend_channels.js" type="module"></script>
     <style>
-      #load_more_button {
+      button, select {
         background-color:inherit;
         color:inherit;
         border:var(--border);
@@ -22,6 +22,11 @@
     </nav>
     <article>
       <h1>Recommended Channels</h1>
+      <form method="GET" action="recommend_channels.html" id="algo_switch_form">
+        <label for="algorithm">Select a algorithm</label>
+        <select name="algorithm" id="algorithms" required="required"></select>
+        <button type="submit">confirm</button>
+      </form>
       <ul id="recommend_channels" class="biglist"></ul>
       <button id="load_more_button" class="gone">load more</button>
     </article>

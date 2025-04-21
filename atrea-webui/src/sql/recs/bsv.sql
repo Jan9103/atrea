@@ -1,4 +1,4 @@
-SELECT target AS channel, SUM(viewer_score.score) AS score
+SELECT target AS channel, SUM(viewer_score.score) * 1.0 AS score
 FROM join_counts jc
 INNER JOIN (
     SELECT viewer, COUNT(*) AS score

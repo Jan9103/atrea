@@ -1,15 +1,13 @@
 import {r,g,x,t,u} from "./xeact.js";
 const n=(e)=>document.createElement(e);
 const PAGESIZE=50;
+const DEFAULT_ALG="brta1";
 
 const fetch_details=(login,img_node,name_node,desc_node)=>{
   console.log("fetch_details "+login);
   fetch("api/channel/"+login+"/twitch_info")
     .then(response=>response.json())
     .then(res=>{
-      console.log("fetch_details->res "+login);
-      console.log(res);
-      console.log(desc_node);
       img_node.src=res["profile_image_url"];
       var name=res["display_name"];
       if(res["broadcaster_type"]!=""){name=name+" ("+res["broadcaster_type"]+")"}
@@ -17,7 +15,6 @@ const fetch_details=(login,img_node,name_node,desc_node)=>{
       name_node.onclick = show_channel_popup;
       //desc_node.innerText=(res["description"].length>30?res["description"].substring(0,30)+"..":res["description"]);
       desc_node.innerText=res["description"].split("\n")[0];
-      console.log("fetch_details->done "+login);
     })
     .catch(error=>console.error('Error:',error));
 };
@@ -52,7 +49,7 @@ const append_render=(channels)=>{
 const render_more=()=>{
   g("load_more_button").classList.add("gone");
   let params=new URLSearchParams(window.location.search);
-  let alg=params.get("algorithm") || "brta1";
+  let alg=params.get("algorithm") || DEFAULT_ALG;
   let offset=g("recommend_channels").childNodes.length;
   fetch("api/recs/general/"+alg+"?limit="+PAGESIZE+"&offset="+offset)
     .then(response=>response.json())
@@ -60,8 +57,30 @@ const render_more=()=>{
     .catch(error=>console.error('Error:',error));
 }
 
+const get_algorithms=()=>{
+  fetch("api/recs/algorithms/general")
+    .then(response=>response.json())
+    .then((algos)=>{
+      let params=new URLSearchParams(window.location.search);
+      let current_alg=params.get("algorithm") || DEFAULT_ALG;
+
+      let ul_node=g("algorithms");
+      for(const alg of algos){
+        let li_node=n("option");
+        li_node.value=alg["name"];
+        li_node.innerText=alg["name"];
+        ul_node.appendChild(li_node);
+        //if (alg["name"] == current_alg) {
+        //  li.selected = true;
+        //}
+      }
+    }).catch(error=>console.error('Error:',error));
+};
+
+
 r(()=>{
   g("load_more_button").onclick=render_more;
+  get_algorithms();
   render_more();
 });
 
