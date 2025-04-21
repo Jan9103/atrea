@@ -4,6 +4,13 @@
     <title>ATREA</title>
     <link rel="stylesheet" href="./style.css">
     <script src="recommend_channels.js" type="module"></script>
+    <style>
+      #load_more_button {
+        background-color:inherit;
+        color:inherit;
+        border:var(--border);
+      }
+    </style>
   </head>
   <body>
     <nav>
@@ -16,6 +23,7 @@
     <article>
       <h1>Recommended Channels</h1>
       <ul id="recommend_channels" class="biglist"></ul>
+      <button id="load_more_button" class="gone">load more</button>
     </article>
     <div id="channel_popup" class="big_floater gone"></div>
   </body>

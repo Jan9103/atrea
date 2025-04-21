@@ -1,5 +1,6 @@
 import {r,g,x,t,u} from "./xeact.js";
 const n=(e)=>document.createElement(e);
+const PAGESIZE=50;
 
 const fetch_details=(login,img_node,name_node,desc_node)=>{
   console.log("fetch_details "+login);
@@ -21,9 +22,11 @@ const fetch_details=(login,img_node,name_node,desc_node)=>{
     .catch(error=>console.error('Error:',error));
 };
 
-const render=(channels)=>{
+const append_render=(channels)=>{
+  if(channels.length == PAGESIZE){
+    g("load_more_button").classList.remove("gone");
+  };
   let ul_node=g("recommend_channels");
-  x(ul_node);
   for(const channel of channels){
     let li_node=n("div");
     let img_node=n("img");
@@ -46,12 +49,21 @@ const render=(channels)=>{
   }
 };
 
-r(()=>{
-  fetch("api/recs/general/brta1?limit=50")
+const render_more=()=>{
+  g("load_more_button").classList.add("gone");
+  let params=new URLSearchParams(window.location.search);
+  let alg=params.get("algorithm") || "brta1";
+  let offset=g("recommend_channels").childNodes.length;
+  fetch("api/recs/general/"+alg+"?limit="+PAGESIZE+"&offset="+offset)
     .then(response=>response.json())
-    .then(render)
+    .then(append_render)
     .catch(error=>console.error('Error:',error));
-})
+}
+
+r(()=>{
+  g("load_more_button").onclick=render_more;
+  render_more();
+});
 
 const hide_channel_popup=()=>{
   let cp=g("channel_popup");
@@ -71,5 +83,3 @@ const show_channel_popup=(click_event)=>{
   cp.appendChild(ifr);
   cp.classList.remove("gone");
 }
-
-export {hide_channel_popup, show_channel_popup};
