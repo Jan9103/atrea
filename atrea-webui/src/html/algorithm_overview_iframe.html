@@ -1,0 +1,39 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <link rel="stylesheet" href="style.css">
+    <title>ATREA</title>
+    <script type="module">
+      import {r,g,t} from "./xeact.js";
+      const n=(e)=>document.createElement(e);
+
+      const apply_res=res=>{
+        let algos=g("algos");
+        res.forEach((data)=>{
+          var algo=n("div");
+          var h2=n("h2");
+          h2.innerText=data["name"];
+          algo.appendChild(h2);
+          var pn=n("p");
+          pn.innerText=data["description"];
+          algo.appendChild(pn);
+          pn=n("p");
+          pn.innerText="Uses: "+data["used_data"].join(", ");
+          algo.appendChild(pn);
+          algos.appendChild(algo);
+        });
+      };
+
+      r(()=>{
+        fetch("api/recs/algorithms/general")
+          .then(response=>response.json())
+          .then(apply_res)
+          .catch(error=>console.error('Error:',error));
+      });
+    </script>
+  </head>
+  <body>
+    <h1>Algorithm overview</h1>
+    <div id="algos"></div>
+  </body>
+</html>
