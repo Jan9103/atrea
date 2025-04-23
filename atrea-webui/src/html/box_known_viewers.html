@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script defer type="module">
+      import {g} from "./libs/xeact.js";
+      const n=(e)=>document.createElement(e);
+      fetch("api/viewers/known_viewers")
+        .then(response=>response.json())
+        .then((viewers)=>{
+          let table=g("cvi_known_viewers");
+          viewers.forEach((vo)=>{
+            var tr=n("tr");
+            var td=n("td");td.innerText=vo["viewer"];tr.appendChild(td);
+            td=n("td");td.innerText=vo["score"];tr.appendChild(td);
+            table.appendChild(tr);
+          });
+        })
+        .catch(error=>console.error('Error:',error));
+    </script>
+  </head>
+  <body>
+    <h1>Viewers you might know</h1>
+    <table id="cvi_known_viewers">
+      <tr><th>Viewer</th><th>Shared liked channels</th></tr>
+    </table>
+  </body>
+</html>

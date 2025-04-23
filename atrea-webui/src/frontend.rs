@@ -21,6 +21,10 @@ pub async fn get_html_box_help_credits() -> content::RawHtml<&'static [u8]> {
 pub async fn get_html_box_help_recs() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/box_help_recs.html"))
 }
+#[get("/box_known_viewers.html")]
+pub async fn get_html_box_known_viewers() -> content::RawHtml<&'static [u8]> {
+    content::RawHtml(include_bytes!("html/box_known_viewers.html"))
+}
 #[get("/box_recs.html")]
 pub async fn get_html_box_recs() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/box_recs.html"))

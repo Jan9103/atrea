@@ -7,6 +7,7 @@ pub mod ai_training_data;
 pub mod api_channel;
 pub mod api_raids;
 pub mod api_recs;
+pub mod api_viewers;
 pub mod frontend;
 //pub mod recommender;
 

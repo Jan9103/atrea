@@ -33,12 +33,19 @@ g("nav_rec_help").onclick=()=>{
   new WinBox("Help: Recommendations", {
     url: "./box_help_recs.html",
     background: "#060",
-  })
-}
+  });
+};
 
 g("nav_credits").onclick=()=>{
   new WinBox("Credits", {
     url: "./box_help_credits.html",
     background: "#060",
-  })
-}
+  });
+};
+
+g("nav_known_viewers").onclick=()=>{
+  new WinBox("Known Viewers", {
+    url: "./box_known_viewers.html",
+    background: "#606",
+  });
+};

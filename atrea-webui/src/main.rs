@@ -3,7 +3,9 @@ extern crate rocket;
 
 use rocket_db_pools::Database;
 
-use atrea_webui::{ai_training_data::ai_training_data, api_channel, api_raids, api_recs, frontend};
+use atrea_webui::{
+    ai_training_data::ai_training_data, api_channel, api_raids, api_recs, api_viewers, frontend,
+};
 
 const BASEPATH: &str = "/";
 
@@ -23,6 +25,7 @@ fn rocket() -> _ {
             api_raids::raidstats_to,
             api_recs::get_general,
             api_recs::list_general_algorithms,
+            api_viewers::get_known_viewers,
             frontend::get_css_biglist,
             frontend::get_css_box_style,
             frontend::get_css_index_style,
@@ -30,6 +33,7 @@ fn rocket() -> _ {
             frontend::get_html_box_channel,
             frontend::get_html_box_help_credits,
             frontend::get_html_box_help_recs,
+            frontend::get_html_box_known_viewers,
             frontend::get_html_box_recs,
             frontend::get_html_index,
             frontend::get_js_box_channel,
