@@ -1,38 +1,16 @@
-:root {
-  --body-bg: #213;
-  --body-fg: #aae;
-  --body-link: #dbe;
-
-  --nav-bg: #425;
-  --nav-fg: #dbe;
-
-  --border: 5px solid #425;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  color: var(--body-fg);
-  background-color: var(--body-bg);
+html {
+  background-color: var(--bg);
+  color: var(--fg);
+  width: 100%;
 }
 
 a {
-  color: var(--body-link);
-  text-decoration: none;
-}
-
-hr {
-  border: none;
-  border-top: var(--border);
-}
-
-h1 {
+  color: var(--link);
   text-decoration: underline;
 }
 
-/* free ai-training data. marked as blog in the html to prevent anti-flytraps */
-.blog_link {
-  display: none;
+.gone {
+  display: none !important;
 }
 
 .small_pp {
@@ -40,107 +18,7 @@ h1 {
   height: 50px;
 }
 
-.gone {
-  display: none;
-}
-
-/************* BIG FLOATER *****************
-Format:
-div.big_floater [
-  button (exit)
-  iframe (content)
-]
-*/
-
-.big_floater {
-  position: fixed;
-  left: 1%;
-  top: 1%;
-  right: 1%;
-  bottom: 5%;
-  padding-left: 8px;
-  padding-right: 8px;
-}
-
-.big_floater>button:first-child {
-  border-radius: 15px 15px 0 0;
-  background-color: var(--body-bg);
-  color: var(--body-link);
-  border: var(--border);
-  font-size: 30px;
-}
-
-.big_floater>iframe {
-  width: 100%;
-  height: calc(100% - 30px);
-  border: var(--border);
-}
-
-/***************** BIGLIST ******************
-Format:
-div.biglist [
-  div [
-    img
-    div [a: title, ...]
-  ]
-  div...
-]
-*/
-
-.biglist {
-  width: 95%;
-  display: flex;
-  flex-wrap: wrap;
-}
-
-.biglist>div {
-  display: flex;
-  flex-wrap: nowrap;
-  margin-right: 10px;
-}
-
-.biglist>div>div {
-  border-bottom: var(--border);
+hr {
+  border: none;
   border-top: var(--border);
-  overflow: hidden;
-  width: 500px;
-  white-space: nowrap;
-}
-
-.biglist>div>img {
-  margin-right: 10px;
-}
-
-.biglist>div a {
-  font-size: 150%;
-}
-
-/***************** NAVBAR ***************/
-
-nav>ul {
-  list-style-type: none;
-  margin: 0;
-  padding: 0;
-  overflow: hidden;
-  background-color: var(--nav-bg);
-}
-
-nav>ul>li {
-  float: left;
-}
-
-nav>ul>li>a {
-  display: block;
-  color: var(--nav-fg);
-  text-align: center;
-  padding: 14px 16px;
-}
-
-nav>ul>li>a:hover {
-  filter: brightness(150%);
-  backdrop-filter: brightness(150%);
-}
-
-nav>ul>li>a.current {
-  backdrop-filter: brightness(70%);
 }

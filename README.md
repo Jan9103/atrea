@@ -179,7 +179,7 @@ Environmental variables:
 
 **Credits:**
 
-* [credits.html](atrea-webui/src/html/credits.html)
+* [credits.html](atrea-webui/src/html/box_help_credits.html)
 
 **Disclaimer:**
 

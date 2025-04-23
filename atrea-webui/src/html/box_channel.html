@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script src="box_channel.js" defer type="module"></script>
+    <style>
+      #cvi_top {
+        display: flex;
+        flex-wrap: wrap;
+      }
+      #cvi_img {
+        width: 230px;
+        height: 230px;
+        margin-right: 10px;
+      }
+
+      #cvi_top th { text-align: left; }
+      #cvi_top td { text-align: right; }
+
+      #cvi_raids tr:nth-child(even) { background-color: var(--bg-alt); }
+      #cvi_raids td:not(:first-child) { text-align: center; }
+    </style>
+  </head>
+  <body>
+    <div id="cvi_top">
+      <img id="cvi_img" src="loading_image.svg" />
+      <div>
+        <h1><span id="cvi_title">Loading..</span> <a id="cvi_twitch_link"><img src="twitch_glitch_logo.svg" width="23px"></a></h1>
+        <table>
+          <tr><th>Twitch ID</th><td id="cvi_id"></td></tr>
+          <tr><th>Creation Date</th><td id="cvi_created"></td></tr>
+          <tr><th>Broadcaster Type</th><td id="cvi_b_type"></td></tr>
+        </table>
+        <div id="cvi_desc"></div>
+      </div>
+    </div>
+    <div id="cvi_raids">
+      <h3>Outgoing Raid Summary</h3>
+      <table id="cvi_raids_o">
+        <tr><th>Target</th><th>Raid count</th><th>Total size</th><th>Avg Size</th></tr>
+      </table>
+      <h3>Incomming Raid Summary</h3>
+      <table id="cvi_raids_i">
+        <tr><th>Raider</th><th>Raid count</th><th>Total size</th><th>Avg Size</th></tr>
+      </table>
+    </div>
+  </body>
+</html>

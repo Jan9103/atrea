@@ -1,0 +1,11 @@
+:root {
+  --bg: #213;
+  --bg-alt: #425;
+  --fg: #aae;
+  --link: #dbe;
+  --border: 5px solid #425;
+}
+
+html {
+  height: 100%;
+}

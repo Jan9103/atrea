@@ -1,10 +1,11 @@
-<!DOCTYPE HTML>
+<!DOCTYPE html>
 <html>
   <head>
+    <meta charset="UTF-8"> 
     <link rel="stylesheet" href="style.css">
-    <title>ATREA</title>
-    <script type="module">
-      import {r,g,t} from "./xeact.js";
+    <link rel="stylesheet" href="box_style.css">
+    <script defer type="module">
+      import {g} from "./libs/xeact.js";
       const n=(e)=>document.createElement(e);
 
       const apply_res=res=>{
@@ -24,16 +25,17 @@
         });
       };
 
-      r(()=>{
-        fetch("api/recs/algorithms/general")
-          .then(response=>response.json())
-          .then(apply_res)
-          .catch(error=>console.error('Error:',error));
-      });
+      fetch("api/recs/algorithms/general")
+        .then(response=>response.json())
+        .then(apply_res)
+        .catch(error=>console.error('Error:',error));
     </script>
   </head>
   <body>
-    <h1>Algorithm overview</h1>
+    <h1>Recommendations</h1>
+    <p>The main feature of ATREA: recommend channels to you based on your liked channels and the collected data.</p>
+    <p>ATREA has multiple algorithms for recommending channels, each with its own strengths and weaknesses.</p>
+    <h2>Algorithm List</h2>
     <div id="algos"></div>
   </body>
 </html>

@@ -1,0 +1,27 @@
+.biglist {
+  width: 95%;
+  display: flex;
+  flex-wrap: wrap;
+}
+
+.biglist>div {
+  display: flex;
+  flex-wrap: nowrap;
+  margin-right: 10px;
+}
+
+.biglist>div>div {
+  border-bottom: var(--border);
+  border-top: var(--border);
+  overflow: hidden;
+  width: 500px;
+  white-space: nowrap;
+}
+
+.biglist>div>img {
+  margin-right: 10px;
+}
+
+.biglist>div a {
+  font-size: 150%;
+}
