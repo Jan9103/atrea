@@ -22,3 +22,11 @@ hr {
   border: none;
   border-top: var(--border);
 }
+
+button {
+  background-color: inherit;
+  border: none;
+  color: var(--link);
+  text-decoration: underline;
+  font-size: inherit;
+}

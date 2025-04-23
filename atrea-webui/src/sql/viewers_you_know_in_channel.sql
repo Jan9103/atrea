@@ -4,7 +4,8 @@ WITH join_counts (viewer, target, count) AS (
     FROM joins
     GROUP BY viewer, target
 )
-SELECT jc.viewer AS channel, viewer_score.score AS shared_channel_count
+SELECT
+    json_object('viewer', jc.viewer, 'score', viewer_score.score)
 FROM join_counts jc
 INNER JOIN (
     SELECT viewer, COUNT(*) AS score

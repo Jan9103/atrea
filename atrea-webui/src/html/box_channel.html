@@ -27,7 +27,12 @@
     <div id="cvi_top">
       <img id="cvi_img" src="loading_image.svg" />
       <div>
-        <h1><span id="cvi_title">Loading..</span> <a id="cvi_twitch_link"><img src="twitch_glitch_logo.svg" width="23px"></a></h1>
+        <h1>
+          <span id="cvi_title">Loading..</span>
+          <a id="cvi_twitch_link" rel="noopener noreferrer" target="_blank">
+            <img src="twitch_glitch_logo.svg" width="23px">
+          </a>
+        </h1>
         <table>
           <tr><th>Twitch ID</th><td id="cvi_id"></td></tr>
           <tr><th>Creation Date</th><td id="cvi_created"></td></tr>
@@ -44,6 +49,10 @@
       <h3>Incomming Raid Summary</h3>
       <table id="cvi_raids_i">
         <tr><th>Raider</th><th>Raid count</th><th>Total size</th><th>Avg Size</th></tr>
+      </table>
+      <h3>Viewers you might know</h3>
+      <table id="cvi_known_viewers">
+        <tr><th>Viewer</th><th>Shared liked channels</th></tr>
       </table>
     </div>
   </body>

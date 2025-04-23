@@ -1,10 +1,26 @@
 import {g} from "./libs/xeact.js";
 const n=(e)=>document.createElement(e);
 
+const open_channel=(click_event)=>{
+  let channel=click_event.target.innerText.toLowerCase().trim();
+  window.top.postMessage(JSON.stringify({
+    "action": "view_channel",
+    "name": channel,
+    "login": channel
+  }));
+};
+
 const fill_raid_table=(table,data,ir)=>{
   data.forEach((co)=>{
     var tr=n("tr");
-    var td=n("td");td.innerText=(ir?co["raider"]:co["target"]);tr.appendChild(td);
+
+    var td=n("td");
+    var btn=n("button");
+    btn.innerText=(ir?co["raider"]:co["target"]);
+    btn.onclick=open_channel;
+    td.appendChild(btn);
+    tr.appendChild(td);
+
     td=n("td");td.innerText=co["raid_count"];tr.appendChild(td);
     td=n("td");td.innerText=co["total_viewers"];tr.appendChild(td);
     td=n("td");td.innerText=co["average_raid_size"];tr.appendChild(td);
@@ -36,4 +52,17 @@ fetch("api/raids/to/"+channel+"/stats")
 fetch("api/raids/from/"+channel+"/stats")
   .then(response=>response.json())
   .then(incomming_raiders=>fill_raid_table(g("cvi_raids_o"),incomming_raiders,false))
+  .catch(error=>console.error('Error:',error));
+
+fetch("api/channel/"+channel+"/known_viewers")
+  .then(response=>response.json())
+  .then((viewers)=>{
+    let table=g("cvi_known_viewers");
+    viewers.forEach((vo)=>{
+      var tr=n("tr");
+      var td=n("td");td.innerText=vo["viewer"];tr.appendChild(td);
+      td=n("td");td.innerText=vo["score"];tr.appendChild(td);
+      table.appendChild(tr);
+    });
+  })
   .catch(error=>console.error('Error:',error));
