@@ -78,27 +78,29 @@ const get_algorithms=()=>{
 };
 
 
+const hide_channel_popup=()=>{
+  g("channel_popup").classList.add("gone");
+  // free ram
+  let pi=g("popup_iframe");
+  pi.src="";
+  pi.innerHTML="";
+};
+
+const show_alg_list=()=>{
+  g("popup_iframe").src="algorithm_overview_iframe.html";
+  g("channel_popup").classList.remove("gone");
+};
+
+const show_channel_popup=(click_event)=>{
+  let channel_name=click_event.target.innerText.toLowerCase().trim();
+  g("popup_iframe").src="channel_view_iframe.html?channel="+channel_name;
+  g("channel_popup").classList.remove("gone");
+}
+
 r(()=>{
+  g("alg_help_button").onclick=show_alg_list;
+  g("hide_popup_button").onclick=hide_channel_popup;
   g("load_more_button").onclick=render_more;
   get_algorithms();
   render_more();
 });
-
-const hide_channel_popup=()=>{
-  let cp=g("channel_popup");
-  cp.classList.add("gone");
-  x(cp);
-};
-
-const show_channel_popup=(click_event)=>{
-  let channel_name = click_event.target.innerText.toLowerCase().trim();
-  let cp=g("channel_popup");
-  let cb=n("button");
-  cb.innerText = "X";
-  cb.onclick = hide_channel_popup;
-  cp.appendChild(cb);
-  let ifr=n("iframe");
-  ifr.src="channel_view_iframe.html?channel="+channel_name;
-  cp.appendChild(ifr);
-  cp.classList.remove("gone");
-}

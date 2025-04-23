@@ -27,9 +27,13 @@
         <select name="algorithm" id="algorithms" required="required"></select>
         <button type="submit">confirm</button>
       </form>
+      <button id="alg_help_button">algorithm overview</button>
       <ul id="recommend_channels" class="biglist"></ul>
       <button id="load_more_button" class="gone">load more</button>
     </article>
-    <div id="channel_popup" class="big_floater gone"></div>
+    <div id="channel_popup" class="big_floater gone">
+      <button id="hide_popup_button">X</button>
+      <iframe id="popup_iframe"></iframe>
+    </div>
   </body>
 </html>

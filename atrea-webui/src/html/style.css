@@ -72,7 +72,7 @@ div.big_floater [
 
 .big_floater>iframe {
   width: 100%;
-  height: 100%;
+  height: calc(100% - 30px);
   border: var(--border);
 }
 

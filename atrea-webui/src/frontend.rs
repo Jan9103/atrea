@@ -16,6 +16,10 @@ pub async fn get_style() -> content::RawCss<&'static [u8]> {
 pub async fn get_channel_view_iframe() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/channel_view_iframe.html"))
 }
+#[get("/algorithm_overview_iframe.html")]
+pub async fn get_algorithm_overview_iframe() -> content::RawHtml<&'static [u8]> {
+    content::RawHtml(include_bytes!("html/algorithm_overview_iframe.html"))
+}
 // #[get("/channel_view.js")]
 // pub async fn get_channel_view_js() -> content::RawJavaScript<&'static [u8]> {
 //     content::RawJavaScript(include_bytes!("html/channel_view.js"))

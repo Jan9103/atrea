@@ -8,13 +8,19 @@ struct Algorithm {
     pub name: &'static str,
     pub sql: &'static str,
     pub description: &'static str,
+    pub used_data: &'static [&'static str],
 }
 impl Algorithm {
     pub fn api_json(&self) -> String {
         format!(
-            r#"{{"name": "{}", "description": "{}"}}"#,
+            r#"{{"name": "{}", "description": "{}", "used_data": [{}]}}"#,
             json_escape_string(self.name),
-            json_escape_string(self.description)
+            json_escape_string(self.description),
+            self.used_data
+                .iter()
+                .map(|i| { format!(r#""{}""#, json_escape_string(i)) })
+                .collect::<Vec<String>>()
+                .join(",")
         )
     }
 }
@@ -23,22 +29,26 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
     Algorithm {
         name: "brta1",
         sql: include_str!("sql/recs/brta1.sql"),
-        description: "Basic raid trace analysis v1",
+        description: "Basic raid trace analysis v1. Mainly finds friendgroups.",
+        used_data: &["raids"],
     },
     Algorithm {
         name: "bsv",
         sql: include_str!("sql/recs/bsv.sql"),
-        description: "Basic shared viewers",
+        description: "Basic shared viewers. Heavily favors big streamers.",
+        used_data: &["joins"],
     },
     Algorithm {
         name: "rava1",
         sql: include_str!("sql/recs/rava1.sql"),
-        description: "Raid and viewer analysis v1 (vixen1 + brta1)",
+        description: "Raid and viewer analysis v1 (vixen1 + brta1). Can be pretty slow and tends to find ones you never heard of.",
+        used_data: &["raids", "joins"],
     },
     Algorithm {
         name: "vixen1",
         sql: include_str!("sql/recs/vixen1.sql"),
-        description: "Weighted shared viewer analysis",
+        description: "Weighted shared viewer analysis. Finds loosely similar streamers.",
+        used_data: &["joins"],
     },
 ];
 
