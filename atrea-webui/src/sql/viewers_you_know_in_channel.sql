@@ -1,4 +1,9 @@
 -- parameters: channel, limit, offset
+WITH join_counts (viewer, target, count) AS (
+    SELECT viewer, target, COUNT(*) AS count
+    FROM joins
+    GROUP BY viewer, target
+)
 SELECT jc.viewer AS channel, viewer_score.score AS shared_channel_count
 FROM join_counts jc
 INNER JOIN (
