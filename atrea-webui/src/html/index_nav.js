@@ -49,3 +49,10 @@ g("nav_known_viewers").onclick=()=>{
     background: "#606",
   });
 };
+
+g("nav_liked_channels").onclick=()=>{
+  new WinBox("Liked Channels", {
+    url: "./box_recs.html?algo=liked_channels",
+    background: "#066",
+  });
+};

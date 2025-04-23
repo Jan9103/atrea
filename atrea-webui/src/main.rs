@@ -24,6 +24,7 @@ fn rocket() -> _ {
             api_raids::raidstats_from_to,
             api_raids::raidstats_to,
             api_recs::get_general,
+            api_recs::get_liked_channels,
             api_recs::list_general_algorithms,
             api_viewers::get_known_viewers,
             frontend::get_css_biglist,

@@ -3,7 +3,6 @@ const n=(e)=>document.createElement(e);
 const PAGESIZE=50;
 
 const fetch_details=(login,img_node,name_node,desc_node)=>{
-  console.log("fetch_details "+login);
   fetch("api/channel/"+login+"/twitch_info")
     .then(response=>response.json())
     .then(res=>{

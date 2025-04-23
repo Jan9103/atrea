@@ -92,6 +92,21 @@ pub async fn get_general(
     for_query(algorithm.sql, db, offset, limit).await
 }
 
+#[get("/api/recs/general/liked_channels?<offset>&<limit>")]
+pub async fn get_liked_channels(
+    db: rocket_db_pools::Connection<AtreaDb>,
+    offset: Option<u32>,
+    limit: Option<u32>,
+) -> Result<RawJson<String>, Status> {
+    for_query(
+        include_str!("sql/recs/liked_channels.sql"),
+        db,
+        offset,
+        limit,
+    )
+    .await
+}
+
 /// query has to:
 ///   return channel (str) and score (f64)
 ///   accept 2 parameters: 1. limit 2. offset
