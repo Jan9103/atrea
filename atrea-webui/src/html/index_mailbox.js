@@ -36,6 +36,14 @@ window.onmessage=(event)=>{
         background: "#066",
       });
       break;
+    case "show_rel_graph":
+      new WinBox("Force Graph", {
+        url: "./box_rel_graph.html",
+        background: "#006",
+        width: "100%",
+        height: "100%",
+      });
+      break;
     default:
       console.error("ERROR: invalid incomming message (unknown action): "+event.data);
       return;

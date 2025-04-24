@@ -33,6 +33,10 @@ pub async fn get_html_box_nav() -> content::RawHtml<&'static [u8]> {
 pub async fn get_html_box_recs() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/box_recs.html"))
 }
+#[get("/box_rel_graph.html")]
+pub async fn get_html_box_rel_graph() -> content::RawHtml<&'static [u8]> {
+    content::RawHtml(include_bytes!("html/box_rel_graph.html"))
+}
 #[get("/index.html")]
 pub async fn get_html_index() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/index.html"))
@@ -61,6 +65,10 @@ pub async fn get_js_index_mailbox() -> content::RawJavaScript<&'static [u8]> {
 
 // libs
 
+#[get("/libs/force-graph.min.js")]
+pub async fn get_js_lib_force_graph() -> content::RawJavaScript<&'static [u8]> {
+    content::RawJavaScript(include_bytes!("html/libs/force-graph.min.js"))
+}
 #[get("/libs/winbox.min.js")]
 pub async fn get_js_lib_winbox() -> content::RawJavaScript<&'static [u8]> {
     content::RawJavaScript(include_bytes!("html/libs/winbox.min.js"))

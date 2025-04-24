@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script src="./libs/force-graph.min.js" async></script>
+    <script defer>
+      // let params=new URLSearchParams(window.location.search);
+      // let data_source=params.get("data_source");
+      const data_source="./api/raids/force_graph_data";
+      fetch(data_source)
+        .then(response=>response.json())
+        .then((gData)=>{
+          const graph=new ForceGraph()
+            (document.getElementById("graph"))
+              .graphData(gData)
+              .backgroundColor("#213")
+              .nodeColor("color")
+              .linkColor(()=>"#088")
+              .onNodeClick((node) => {
+                console.log(node);
+                window.top.postMessage(JSON.stringify({
+                  "action": "view_channel",
+                  "name": node["name"],
+                  "login": node["id"],
+                }));
+              })
+              //.linkDirectionalParticles("avg_size")
+              //.linkDirectionalParticleSpeed(d => d.raidcount * 0.001)
+              ;
+        })
+        .catch(error=>console.error('Error:',error));
+    </script>
+  </head>
+  <body>
+    <div id="graph"></div>
+  </body>
+</html>

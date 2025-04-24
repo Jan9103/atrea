@@ -54,5 +54,11 @@ g("nav_known_viewers").onclick=()=>{
 g("nav_liked_channels").onclick=()=>{
   window.top.postMessage(JSON.stringify({
     "action": "open_liked_channels"
-  }))
+  }));
+};
+
+g("nav_rel_graph").onclick=()=>{
+  window.top.postMessage(JSON.stringify({
+    "action": "show_rel_graph",
+  }));
 };

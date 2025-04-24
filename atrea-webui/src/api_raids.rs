@@ -164,3 +164,42 @@ pub async fn raidstats_to(
             .join(",")
     )))
 }
+
+#[get("/api/raids/force_graph_data")]
+pub async fn force_graph_data(
+    mut db: rocket_db_pools::Connection<AtreaDb>,
+) -> Result<RawJson<String>, Status> {
+    let nodes: Vec<SqliteRow> = match sqlx::query(include_str!("sql/graph/force_graph_nodes.sql"))
+        .fetch_all(&mut **db)
+        .await
+    {
+        Ok(res) => res,
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(Status::InternalServerError);
+        }
+    };
+    let links: Vec<SqliteRow> = match sqlx::query(include_str!("sql/graph/force_graph_links.sql"))
+        .fetch_all(&mut **db)
+        .await
+    {
+        Ok(res) => res,
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(Status::InternalServerError);
+        }
+    };
+    Ok(RawJson(format!(
+        r#"{{"nodes": [{}], "links": [{}]}}"#,
+        nodes
+            .into_iter()
+            .map(|r| r.get(0))
+            .collect::<Vec<String>>()
+            .join(","),
+        links
+            .into_iter()
+            .map(|r| r.get(0))
+            .collect::<Vec<String>>()
+            .join(","),
+    )))
+}
