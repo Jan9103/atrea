@@ -5,6 +5,8 @@ A unofficial 3rd party alternate [twitch](https://twitch.tv) recommendation algo
 Why for nerds? because its "hard" to run and works best with some sort of homelab.  
 It is also not viable to host it for the masses thanks to [rate limits](https://dev.twitch.tv/docs/chat/#rate-limits).
 
+![screenshot](https://jan9103.github.io/atrea/media/00.avif)
+
 ## Project status
 
 * Currently it is in alpha (the base-functionality exists in a buggy state).
