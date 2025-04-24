@@ -160,19 +160,27 @@ def get_channel_data []: nothing -> nothing {
 
   log info '  Getting channel info..'
   for chunk in (
+    # no idea why, but using `queryr db` is broken (the data still shows up in the for-loop, but dosn't get saved)
+    #stor open
+    #| query db 'SELECT DISTINCT name FROM (SELECT DISTINCT (r.raider || r.target) AS name FROM raids r UNION SELECT DISTINCT lc.name FROM liked_channels lc)'
+    #| get name
     (stor open).raids.raider
+    | append ((stor open).raids.target)
+    | append ((stor open).liked_channels.name)
     | uniq
     | url encode -a
     | each {|i| $'login=($i)'}
     | chunks 100  # limit of channels you can check per request
   ) {
     if ($chunk | is-empty) { continue }
-    http get -H $headers $'https://api.twitch.tv/helix/users?($chunk | str join "&")'
-    | get data
-    | update created_at {|i| $i.created_at | into datetime -f %+ }
-    | update id {|i| $i.id | into int}
-    | select id login display_name broadcaster_type description profile_image_url created_at
-    | stor insert -t channel_info
+    let res = (
+      http get -H $headers $'https://api.twitch.tv/helix/users?($chunk | str join "&")'
+      | get data
+      | update created_at {|i| $i.created_at | into datetime -f %+ }
+      | update id {|i| $i.id | into int}
+      | select id login display_name broadcaster_type description profile_image_url created_at
+    )
+    $res | stor insert -t channel_info
   }
 
   log info '  Cleaning up twitch access token..'
