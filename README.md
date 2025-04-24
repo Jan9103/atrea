@@ -42,26 +42,28 @@ It consists of 3 parts:
 
 ## Usage
 
-### Getting the binaries
+### Required binaries
 
-For now you will have to compile them yourself.
+`git` + choose one:
+* container
+  * [docker](https://www.docker.com/) or [podman](https://podman.io/)
+* no container
+  * `cargo` (installer: [rustup](https://rustup.rs/))
+  * [nu](https://www.nushell.sh/book/installation.html)
 
-If you are on windows use either `nu` or `git-bash` as your shell.
-
-1. install rust ([via rustup](https://rustup.rs/))
-1. install `git` (it should be available for all package-managers)
-1. install `nu` ([tutorial](https://www.nushell.sh/book/installation.html))
-1. open a terminal and run the following commands (in order):
-  1. `git clone https://github.com/jan9103/atrea`
-  1. `cd atrea/atrea-webui`
-  1. `cargo build --release`
-  1. `cd ../atrea-webui`
-  1. `cargo build --release`
-
-You can now find the binaries at:
-* `your home directory/atrea/atrea-collector/target/release/atrea-collector`
-* `your home directory/atrea/atrea-converter/convert.nu` (this one is a script)
-* `your home directory/atrea/atrea-webui/target/release/atrea-webui`
+Compiling:
+* download the source-code
+  * as `zip` from [releases](https://github.com/Jan9103/atrea/releases) (under `assets`)
+  * via `git` (`git clone --depth 1 https://github.com/Jan9103/atrea`)
+* (no container) compiling the rust binaries (`atrea-collector` and `atrea-webui`)
+  1. open the directory in a terminal
+  1. run `cargo build --release --locked`
+  1. you can find the binary under `target/release/<name>`
+* (container) running it
+  * for `atrea-collector` and `atrea-webui` you will have to run its respective `docker-build.sh` first
+    * if someone can figure out how [this tutorial](https://docs.github.com/en/packages/working-with-a-github-packages-registry/working-with-the-container-registry) is supposed to work i get rid of this step.
+  * each directory contains a `docker-run.sh` file, which you can execute to run that project
+  * depending on your setup you might have to adjust it (`podman` instead of `docker`, arguments, paths, etc)
 
 ### Global configuration
 
