@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <style>
+      nav>ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      nav>ul>li {
+        display: block;
+        padding: 5px;
+        margin: 5px;
+        flex-wrap: nowrap;
+        border-radius: 15px;
+        background-color: var(--bg-alt);
+        height: fit-content;
+      }
+
+      nav>ul>li>h2 {
+        margin-top: 0;
+      }
+    </style>
+    <script src="box_nav.js" defer type="module"></script>
+  </head>
+  <body>
+    <nav>
+      <ul>
+        <li>Recommend Channels (<button id="nav_rec_help">help</button>)<ul id="nav_rec_alg_inject"></ul></li>
+        <li><button id="nav_liked_channels">Liked channels</button></li>
+        <li><button id="nav_known_viewers">Viewers you know</button></li>
+        <li><button id="nav_credits">Credits</button></li>
+      </ul>
+    </nav>
+  </body>
+</html>

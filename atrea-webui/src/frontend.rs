@@ -25,6 +25,10 @@ pub async fn get_html_box_help_recs() -> content::RawHtml<&'static [u8]> {
 pub async fn get_html_box_known_viewers() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/box_known_viewers.html"))
 }
+#[get("/box_nav.html")]
+pub async fn get_html_box_nav() -> content::RawHtml<&'static [u8]> {
+    content::RawHtml(include_bytes!("html/box_nav.html"))
+}
 #[get("/box_recs.html")]
 pub async fn get_html_box_recs() -> content::RawHtml<&'static [u8]> {
     content::RawHtml(include_bytes!("html/box_recs.html"))
@@ -42,6 +46,10 @@ pub async fn get_html_index() -> content::RawHtml<&'static [u8]> {
 pub async fn get_js_box_channel() -> content::RawJavaScript<&'static [u8]> {
     content::RawJavaScript(include_bytes!("html/box_channel.js"))
 }
+#[get("/box_nav.js")]
+pub async fn get_js_box_nav() -> content::RawJavaScript<&'static [u8]> {
+    content::RawJavaScript(include_bytes!("html/box_nav.js"))
+}
 #[get("/box_recs.js")]
 pub async fn get_js_box_recs() -> content::RawJavaScript<&'static [u8]> {
     content::RawJavaScript(include_bytes!("html/box_recs.js"))
@@ -49,10 +57,6 @@ pub async fn get_js_box_recs() -> content::RawJavaScript<&'static [u8]> {
 #[get("/index_mailbox.js")]
 pub async fn get_js_index_mailbox() -> content::RawJavaScript<&'static [u8]> {
     content::RawJavaScript(include_bytes!("html/index_mailbox.js"))
-}
-#[get("/index_nav.js")]
-pub async fn get_js_index_nav() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/index_nav.js"))
 }
 
 // libs
@@ -77,10 +81,6 @@ pub async fn get_css_biglist() -> content::RawCss<&'static [u8]> {
 #[get("/box_style.css")]
 pub async fn get_css_box_style() -> content::RawCss<&'static [u8]> {
     content::RawCss(include_bytes!("html/box_style.css"))
-}
-#[get("/index_style.css")]
-pub async fn get_css_index_style() -> content::RawCss<&'static [u8]> {
-    content::RawCss(include_bytes!("html/index_style.css"))
 }
 #[get("/style.css")]
 pub async fn get_css_style() -> content::RawCss<&'static [u8]> {

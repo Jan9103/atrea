@@ -5,19 +5,69 @@
     <title>ATREA</title>
     <script src="libs/winbox.min.js"></script>
     <script src="index_mailbox.js" async></script>
-    <script src="index_nav.js" defer type="module"></script>
     <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="index_style.css">
+    <style>
+      :root {
+        --bg: #425;
+        --bg-alt: #314;
+        --fg: #aae;
+        --link: #dbe;
+        /* --border: 4px solid #849; */
+      }
+
+      html {
+        height: 100vh;
+        overflow: hidden;
+      }
+
+      #root_body {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: inherit;
+      }
+
+      #root_body_div>* {
+        width: inherit;
+        text-align: center;
+      }
+    </style>
+    <script defer type="module">
+      import {g} from "./libs/xeact.js";
+
+      const open_nav=()=>{
+        let nav=WinBox.stack().find((i)=>i.title==="Navigation");
+        if(nav===undefined){
+          new WinBox("Navigation", {
+            url: "./box_nav.html",
+            background: "#600",
+            width: "350px",
+            class: ["atrea_nav_window"],
+          });
+        }else{
+          if(nav.focused){
+            nav.minimize(true);
+          } else {
+            nav.minimize(false);
+            nav.focus();
+          }
+        }
+      };
+
+      g("open_nav_button").onclick=open_nav;
+      document.addEventListener("keydown", (event)=>{
+        console.log(event);
+        if(event.key===" "){
+          event.preventDefault();
+          open_nav();
+        }
+      });
+    </script>
   </head>
-  <body>
-    <h1>ATREA</h1>
-    <nav>
-      <ul>
-        <li><h2>Recommend Channels (<button id="nav_rec_help">help</button>)</h2><ul id="nav_rec_alg_inject"></ul></li>
-        <li><h2><button id="nav_liked_channels">Liked channels</button></h2></li>
-        <li><h2><button id="nav_known_viewers">Viewers you know</button></h2></li>
-        <li><h2><button id="nav_credits">Credits</button></h2></li>
-      </ul>
-    </nav>
+  <body id="root_body">
+    <div id="root_body_div">
+      <h1>ATREA</h1>
+      <button id="open_nav_button">Open Navigation</button> (shortcut: space)
+    </div>
   </body>
 </html>

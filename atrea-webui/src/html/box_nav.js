@@ -3,10 +3,10 @@ import {r,g,x,t,u} from "./libs/xeact.js";
 const n=(e)=>document.createElement(e);
 
 const new_box_recs=(alg_name)=>{
-  new WinBox("Recommendations ("+alg_name+")", {
-    url: "./box_recs.html?algo="+alg_name,
-    background: "#066",
-  });
+  window.top.postMessage(JSON.stringify({
+    "action": "show_recs",
+    "alg": alg_name,
+  }));
 };
 
 const render_rec_alg=(ul_node,alg)=>{
@@ -30,29 +30,29 @@ fetch("api/recs/algorithms/general")
   .catch(error=>console.error('Error:',error));
 
 g("nav_rec_help").onclick=()=>{
-  new WinBox("Help: Recommendations", {
-    url: "./box_help_recs.html",
-    background: "#060",
-  });
+  window.top.postMessage(JSON.stringify({
+    "action": "open_help",
+    "site": "recs",
+    "title": "Recommendations",
+  }));
 };
 
 g("nav_credits").onclick=()=>{
-  new WinBox("Credits", {
-    url: "./box_help_credits.html",
-    background: "#060",
-  });
+  window.top.postMessage(JSON.stringify({
+    "action": "open_help",
+    "site": "credits",
+    "title": "Credits",
+  }));
 };
 
 g("nav_known_viewers").onclick=()=>{
-  new WinBox("Known Viewers", {
-    url: "./box_known_viewers.html",
-    background: "#606",
-  });
+  window.top.postMessage(JSON.stringify({
+    "action": "open_known_viewers"
+  }))
 };
 
 g("nav_liked_channels").onclick=()=>{
-  new WinBox("Liked Channels", {
-    url: "./box_recs.html?algo=liked_channels",
-    background: "#066",
-  });
+  window.top.postMessage(JSON.stringify({
+    "action": "open_liked_channels"
+  }))
 };
