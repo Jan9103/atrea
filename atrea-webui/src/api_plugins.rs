@@ -11,7 +11,7 @@ use std::{
 
 use crate::AtreaSettingsDb;
 
-#[get("/api/plugins/get_css/<plugin_name>/<css_name>")]
+#[get("/get_css_plugin?<plugin_name>&<css_name>")]
 pub async fn get_css(plugin_name: &str, css_name: &str) -> Result<content::RawCss<String>, Status> {
     if !is_valid_filename(plugin_name) || !is_valid_filename(css_name) {
         return Err(Status::BadRequest);
@@ -28,7 +28,7 @@ pub async fn get_css(plugin_name: &str, css_name: &str) -> Result<content::RawCs
         }
     }
 }
-#[get("/api/plugins/get_js/<plugin_name>/<js_name>")]
+#[get("/get_js_plugin?<plugin_name>&<js_name>")]
 pub async fn get_js(
     plugin_name: &str,
     js_name: &str,

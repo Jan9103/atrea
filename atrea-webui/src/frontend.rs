@@ -193,7 +193,7 @@ async fn get_extra_head(
                 let plugin_name: String = plugin.get(0);
                 result.push_str(
                     format!(
-                        r#"<link rel="stylesheet" href="api/plugins/get_css/{plugin_name}/{css_name}">"#
+                        r#"<link rel="stylesheet" href="get_css_plugin?plugin_name={plugin_name}&css_name={css_name}">"#
                     )
                     .as_str(),
                 );
@@ -222,7 +222,7 @@ async fn get_extra_head(
                 let plugin_name: String = plugin.get(0);
                 result.push_str(
                     format!(
-                        r#"<script src="api/plugins/get_js/{plugin_name}/{js_name}" type="module">"#
+                        r#"<script src="get_js_plugin?plugin_name={plugin_name}&js_name={js_name}" type="module"></script>"#
                     )
                     .as_str(),
                 );
