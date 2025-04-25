@@ -52,7 +52,7 @@ pub async fn get_js(
 #[get("/api/plugins/enable/<plugin_name>")]
 pub async fn enable_plugin(
     mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
-    plugin_name: String,
+    plugin_name: &str,
 ) -> Result<Status, Status> {
     if let Err(err) = sqlx::query("UPDATE plugins SET enabled = 1 WHERE plugin_name == ?;")
         .bind(plugin_name)
@@ -68,7 +68,7 @@ pub async fn enable_plugin(
 #[get("/api/plugins/disable/<plugin_name>")]
 pub async fn disable_plugin(
     mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
-    plugin_name: String,
+    plugin_name: &str,
 ) -> Result<Status, Status> {
     if let Err(err) = sqlx::query("UPDATE plugins SET enabled = 0 WHERE plugin_name == ?;")
         .bind(plugin_name)
