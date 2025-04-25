@@ -9,6 +9,10 @@ a {
   text-decoration: underline;
 }
 
+a:has(img) {
+  text-decoration: none;
+}
+
 .gone {
   display: none !important;
 }
