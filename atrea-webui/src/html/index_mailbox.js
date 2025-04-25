@@ -44,6 +44,12 @@ window.onmessage=(event)=>{
         height: "100%",
       });
       break;
+    case "show_plugins":
+      new WinBox("Plugins", {
+        url: "./box_plugins.html",
+        background: "#000",
+      });
+      break;
     default:
       console.error("ERROR: invalid incomming message (unknown action): "+event.data);
       return;

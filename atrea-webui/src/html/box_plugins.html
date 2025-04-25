@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <style>
+      ul {
+        list-style-type: none;
+        padding: 0;
+        display: flex;
+        flex-wrap: wrap;
+      }
+
+      ul>li {
+        display: block;
+        padding: 5px;
+        margin: 5px;
+        flex-wrap: nowrap;
+        border-radius: 15px;
+        background-color: var(--bg-alt);
+        height: fit-content;
+      }
+
+      h2 {
+        margin-top: 0;
+      }
+      h2>button::before {
+        content: '[';
+      }
+      h2>button::after {
+        content: ']';
+      }
+    </style>
+    <script defer type="module">
+      import {g,x} from "./libs/xeact.js";
+      const n=(e)=>document.createElement(e);
+
+      const toggle_plugin=e=>{
+        let plugin_name=e.target.getAttribute("data-name");
+        e.target.classList.add("gone");
+        fetch("api/plugins/"+(e.target.innerText.trim())+"/"+plugin_name)
+          .then(a=>{
+            if(a.ok){
+              e.target.innerText=(e.target.innerText.trim()=="enable"?"disable":"enable");
+              e.target.classList.remove("gone");
+            }
+          });
+      };
+
+      const add_plugin=data=>{
+        var li=n("li");
+        var h2=n("h2");
+        h2.innerText=data["plugin_name"];
+        var btn=n("button");
+        btn.innerText=(data["enabled"]?"disable":"enable");
+        btn.setAttribute("data-name", data["plugin_name"]);
+        btn.onclick=toggle_plugin;
+        h2.appendChild(btn);
+        li.appendChild(h2);
+        var p_node=n("p");
+        p_node.innerText=data["description"];
+        li.appendChild(p_node);
+        g("plugin_list").appendChild(li);
+      };
+
+      const gen_plugin_list=()=>{
+        fetch("api/plugins/list")
+          .then(response=>response.json())
+          .then((res)=>{
+            res.forEach((data)=>{
+              add_plugin(data);
+            });
+          })
+          .catch(error=>console.error('Error:',error));
+      };
+      gen_plugin_list()
+
+      g("refresh_db").onclick=e=>{
+        e.target.classList.add("gone");
+        x(g("plugin_list"));
+        fetch("api/plugins/update_db")
+          .then(a=>{
+            if(a.ok){
+              gen_plugin_list();
+              e.target.classList.remove("gone");
+            }
+          })
+      };
+    </script>
+    <!--HEAD-->
+  </head>
+  <body>
+    <p><b>NOTE:</b> Many changes won't be visible until you reload the window.</p>
+    <button id="refresh_db">Check filesystem for changes</button>
+    <ul id="plugin_list"></ul>
+  </body>
+</html>

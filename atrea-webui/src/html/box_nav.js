@@ -62,3 +62,9 @@ g("nav_rel_graph").onclick=()=>{
     "action": "show_rel_graph",
   }));
 };
+
+g("nav_plugins").onclick=()=>{
+  window.top.postMessage(JSON.stringify({
+    "action": "show_plugins",
+  }));
+};
