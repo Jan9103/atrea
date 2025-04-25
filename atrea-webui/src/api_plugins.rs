@@ -91,7 +91,8 @@ pub async fn list(
             'plugin_name', plugin_name,
             'description', description,
             'enabled', enabled
-        ) FROM plugins;
+        ) FROM plugins p
+        ORDER BY p.plugin_name ASC;
         "#,
     )
     .fetch_all(&mut **db)
