@@ -51,7 +51,7 @@
       const add_plugin=data=>{
         var li=n("li");
         var h2=n("h2");
-        h2.innerText=data["plugin_name"];
+        h2.innerText=data["plugin_name"].replaceAll("_", " ");
         var btn=n("button");
         btn.innerText=(data["enabled"]?"disable":"enable");
         btn.setAttribute("data-name", data["plugin_name"]);
