@@ -100,7 +100,7 @@ impl LogStreams {
         if let Some(ref mut shoutout_csv) = self.shoutout_csv {
             shoutout_csv.write_all(
                 format!(
-                    "{time},{author},{target}",
+                    "{time},{author},{target}\n",
                     time = SystemTime::now()
                         .duration_since(UNIX_EPOCH)
                         .unwrap()
