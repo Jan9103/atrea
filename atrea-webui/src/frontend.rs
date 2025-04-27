@@ -94,8 +94,12 @@ pub async fn get_html_index(
     db: rocket_db_pools::Connection<AtreaSettingsDb>,
 ) -> Result<content::RawHtml<String>, Status> {
     let extra_head: String = get_extra_head(db, "index").await?;
-    let html: String =
-        include_str!("html/index.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
+    let html: String = include_str!("html/index.html")
+        .replace(EXTRA_HEAD_MARKER, extra_head.as_str())
+        .replace(
+            "<!--VERSION-->",
+            option_env!("CARGO_PKG_VERSION").unwrap_or("(unknown version)"),
+        );
     Ok(content::RawHtml(html))
 }
 
