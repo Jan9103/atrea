@@ -12,6 +12,7 @@ FLAGS:
     -c, --channel-list-file PATH    location of the channel-list (newline seperated list)
     -j, --log-joins                 log join infos
     -s, --log-shoutouts             log shoutouts
+        --follow-shoutouts          join shouted-out channels just like raids (ignores target-size)
         --min-raidsize      NUMBER  minimum size of raids to follow (default: 3)
         --max-raidsize      NUMBER  maximum size of raids to follow (default: infinite)
         --stdout-sent               debug-log sent things via stdout
@@ -62,6 +63,7 @@ fn parse_args() -> Result<(Settings, PathBuf), pico_args::Error> {
     let settings = Settings {
         log_joins: pargs.contains(["-j", "--log-joins"]),
         log_shoutouts: pargs.contains(["-s", "--log-shoutouts"]),
+        follow_shoutouts: pargs.contains("--follow-shoutouts"),
         stdout_log_sent: pargs.contains("--stdout-sent"),
         stdout_log_recieved: pargs.contains("--stdout-recieved"),
         min_raidsize_to_follow: pargs.opt_value_from_str("--min-raidsize")?.unwrap_or(3),

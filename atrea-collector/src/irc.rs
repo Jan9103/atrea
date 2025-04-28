@@ -199,6 +199,9 @@ fn handle_incomming_irc(
                             // only allow valid usernames (some shoutout by twitter-url, name, (at)twitter_handle, etc)
                             if target.chars().all(|c| c.is_ascii_alphanumeric()) {
                                 logs.log_shoutout(room, target.as_str())?;
+                                if settings.follow_shoutouts {
+                                    send_irc_cmd(settings, stream, "JOIN", format!("#{}", target))?;
+                                }
                             }
                         }
                     }

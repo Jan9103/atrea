@@ -7,4 +7,5 @@ pub struct Settings {
     pub stdout_log_recieved: bool,
     pub min_raidsize_to_follow: usize,
     pub max_raidsize_to_follow: usize,
+    pub follow_shoutouts: bool,
 }
