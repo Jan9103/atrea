@@ -89,6 +89,7 @@ def csv_to_sqlite [
   | par-each {|file|
     log info $"  Converting ($file | path basename) to sqlite.."
     smart_csv_cat $file
+    | rename timestamp viewer target
     | where viewer not-in $KNOWN_GLOBAL_BOTS
     | stor insert -t joins | null
   } | null
