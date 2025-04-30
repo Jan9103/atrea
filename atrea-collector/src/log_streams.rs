@@ -51,7 +51,7 @@ impl LogStreams {
         res.raid_csv
             .write_all("timestamp,raider,target,size\n".as_bytes())?;
         if let Some(ref mut join_csv) = res.join_csv {
-            join_csv.write_all("timestamp,chatter,target\n".as_bytes())?;
+            join_csv.write_all("timestamp,viewer,target\n".as_bytes())?;
         };
         if let Some(ref mut shoutout_csv) = res.shoutout_csv {
             shoutout_csv.write_all("timestamp,author,target\n".as_bytes())?;
