@@ -33,6 +33,18 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
         used_data: &["raids"],
     },
     Algorithm {
+        name: "brta2",
+        sql: include_str!("sql/recs/brta2.sql"),
+        description: "Basic raid trace analysis v2 (improved handling of big datasets). Mainly finds friendgroups.",
+        used_data: &["raids"],
+    },
+    Algorithm {
+        name: "bsc",
+        sql: include_str!("sql/recs/bsc.sql"),
+        description: "Basic shoutout connections.",
+        used_data: &["shoutouts"],
+    },
+    Algorithm {
         name: "bsv",
         sql: include_str!("sql/recs/bsv.sql"),
         description: "Basic shared viewers. Heavily favors big streamers.",
