@@ -4,15 +4,19 @@ use rocket::http::Status;
 use rocket::response::content::RawJson;
 use rocket_db_pools::{sqlx, sqlx::sqlite::SqliteRow, sqlx::Row};
 
-#[get("/api/raids/from/<raider>/to/<target>")]
+#[get("/api/raids/from/<raider>/to/<target>?<offset>&<limit>")]
 pub async fn raids_from_to(
     mut db: rocket_db_pools::Connection<AtreaDb>,
     raider: &str,
     target: &str,
+    offset: Option<u32>,
+    limit: Option<u32>,
 ) -> Result<RawJson<String>, Status> {
-    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE raider == ? AND target == ?")
+    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE raider == ? AND target == ? OFFSET ? LIMIT ?")
         .bind(raider)
         .bind(target)
+        .bind(offset.unwrap_or(0))
+        .bind(limit.unwrap_or(20))
         .fetch_all(&mut **db)
         .await {
         Ok(res) => res,
@@ -30,13 +34,17 @@ pub async fn raids_from_to(
     )))
 }
 
-#[get("/api/raids/from/<raider>")]
+#[get("/api/raids/from/<raider>?<offset>&<limit>")]
 pub async fn raids_from(
     mut db: rocket_db_pools::Connection<AtreaDb>,
     raider: &str,
+    offset: Option<u32>,
+    limit: Option<u32>,
 ) -> Result<RawJson<String>, Status> {
-    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE raider == ?")
+    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE raider == ? OFFSET ? LIMIT ?")
         .bind(raider)
+        .bind(offset.unwrap_or(0))
+        .bind(limit.unwrap_or(20))
         .fetch_all(&mut **db)
         .await {
         Ok(res) => res,
@@ -54,13 +62,17 @@ pub async fn raids_from(
     )))
 }
 
-#[get("/api/raids/to/<target>")]
+#[get("/api/raids/to/<target>?<offset>&<limit>")]
 pub async fn raids_to(
     mut db: rocket_db_pools::Connection<AtreaDb>,
     target: &str,
+    offset: Option<u32>,
+    limit: Option<u32>,
 ) -> Result<RawJson<String>, Status> {
-    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE target == ?")
+    let res: Vec<SqliteRow> = match sqlx::query("SELECT json_object('timestamp', unixepoch(timestamp), 'raider', raider, 'target', target, 'size', size) FROM raids WHERE target == ? OFFSET ? LIMIT ?")
         .bind(target)
+        .bind(offset.unwrap_or(0))
+        .bind(limit.unwrap_or(20))
         .fetch_all(&mut **db)
         .await {
         Ok(res) => res,
