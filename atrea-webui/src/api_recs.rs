@@ -57,6 +57,12 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
         used_data: &["raids", "joins"],
     },
     Algorithm {
+        name: "rava2",
+        sql: include_str!("sql/recs/rava2.sql"),
+        description: "Raid and viewer analysis v2 (vixen1 + brta2). Can be pretty slow and tends to find ones you never heard of.",
+        used_data: &["raids", "joins"],
+    },
+    Algorithm {
         name: "vixen1",
         sql: include_str!("sql/recs/vixen1.sql"),
         description: "Weighted shared viewer analysis. Finds loosely similar streamers.",
