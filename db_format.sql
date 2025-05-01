@@ -36,3 +36,15 @@ CREATE TABLE [channel_info] (
     `profile_image_url` STRING,
     `created_at` DATETIME
 );
+
+CREATE TABLE [shoutouts] (
+    `timestamp` DATETIME,
+    `author` TEXT,
+    `target` TEXT
+);
+
+CREATE TABLE [shoutout_connections] (
+    `author` TEXT,
+    `target` TEXT,
+    `shoutout_count` INTEGER
+);

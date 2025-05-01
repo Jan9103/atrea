@@ -72,6 +72,7 @@ def main [
 
   csv_to_sqlite $collected_data_dir
   calculate_raid_connections
+  calculate_shoutout_connections
   preprocess_joins
   get_channel_data
 
@@ -101,6 +102,15 @@ def csv_to_sqlite [
     log info $"  Converting ($file | path basename) to sqlite.."
     smart_csv_cat $file
     | stor insert -t raids | null
+  } | null
+
+  log info "Converting shoutouts to sqlite.."
+  stor create -t shoutouts --columns {"timestamp": datetime, "author": str, "target": str}
+  glob 'shoutouts-*.csv*'
+  | par-each {|file|
+    log info $"  Converting ($file | path basename) to sqlite.."
+    smart_csv_cat $file
+    | stor insert -t shoutouts | null
   } | null
 }
 
@@ -132,6 +142,22 @@ def calculate_raid_connections []: nothing -> nothing {
         "raid_count": ($raids | length)
         "average_raid_size": ($raids.size | math avg | math round)
       } | stor insert -t raid_connections | null
+    }
+  } | null
+}
+
+def calculate_shoutout_connections []: nothing -> nothing {
+  log info "Generating shoutout-connection cache.."
+  stor create -t shoutout_connections --columns {"author": str, "target": str, "shoutout_count": int} | null
+  (stor open).shoutouts.author
+  | uniq
+  | par-each {|author|
+    for target in ((stor open).shoutouts | where author == $author | get target | uniq) {
+      let raids = ((stor open).shoutouts | where author == $author and target == $target)
+      {
+        "author": $author, "target": $target,
+        "shoutout_count": ($raids | length)
+      } | stor insert -t shoutout_connections | null
     }
   } | null
 }
