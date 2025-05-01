@@ -8,8 +8,8 @@ use rocket::{
 use rocket_db_pools::{sqlx, Database};
 
 use atrea_webui::{
-    ai_training_data::ai_training_data, api_channel, api_plugins, api_raids, api_recs, api_viewers,
-    frontend, AtreaDb, AtreaSettingsDb,
+    ai_training_data::ai_training_data, api_channel, api_plugins, api_raids, api_recs,
+    api_shoutouts, api_viewers, frontend, AtreaDb, AtreaSettingsDb,
 };
 
 const BASEPATH: &str = "/";
@@ -45,6 +45,12 @@ fn rocket() -> _ {
                 api_recs::get_general,
                 api_recs::get_liked_channels,
                 api_recs::list_general_algorithms,
+                api_shoutouts::shoutouts_from,
+                api_shoutouts::shoutouts_from_to,
+                api_shoutouts::shoutouts_to,
+                api_shoutouts::shoutoutstats_from,
+                api_shoutouts::shoutoutstats_from_to,
+                api_shoutouts::shoutoutstats_to,
                 api_viewers::get_known_viewers,
                 frontend::get_css_biglist,
                 frontend::get_css_box_style,
