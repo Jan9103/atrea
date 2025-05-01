@@ -27,6 +27,21 @@ const fill_raid_table=(table,data,ir)=>{
     table.appendChild(tr);
   });
 };
+const fill_so_table=(table,data,ir)=>{
+  data.forEach((co)=>{
+    var tr=n("tr");
+
+    var td=n("td");
+    var btn=n("button");
+    btn.innerText=(ir?co["author"]:co["target"]);
+    btn.onclick=open_channel;
+    td.appendChild(btn);
+    tr.appendChild(td);
+
+    td=n("td");td.innerText=co["shoutout_count"];tr.appendChild(td);
+    table.appendChild(tr);
+  });
+};
 
 var params = new URLSearchParams(window.location.search);
 var channel = params.get("login");
@@ -52,6 +67,15 @@ fetch("api/raids/to/"+channel+"/stats")
 fetch("api/raids/from/"+channel+"/stats")
   .then(response=>response.json())
   .then(incomming_raiders=>fill_raid_table(g("cvi_raids_o"),incomming_raiders,false))
+  .catch(error=>console.error('Error:',error));
+
+fetch("api/shoutouts/to/"+channel+"/stats")
+  .then(response=>response.json())
+  .then(incomming_so=>fill_so_table(g("cvi_so_i"),incomming_so,true))
+  .catch(error=>console.error('Error:',error));
+fetch("api/shoutouts/from/"+channel+"/stats")
+  .then(response=>response.json())
+  .then(incomming_so=>fill_so_table(g("cvi_so_o"),incomming_so,false))
   .catch(error=>console.error('Error:',error));
 
 fetch("api/channel/"+channel+"/known_viewers")
