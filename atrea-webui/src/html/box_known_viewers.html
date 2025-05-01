@@ -6,8 +6,9 @@
     <link rel="stylesheet" href="box_style.css">
     <script defer type="module">
       import {g} from "./libs/xeact.js";
-      const n=(e)=>document.createElement(e);
+      import{cr,ce,n}from"./atrea.js";
       fetch("api/viewers/known_viewers")
+        .then(cr)
         .then(response=>response.json())
         .then((viewers)=>{
           let table=g("cvi_known_viewers");
@@ -18,7 +19,7 @@
             table.appendChild(tr);
           });
         })
-        .catch(error=>console.error('Error:',error));
+        .catch(ce);
     </script>
     <!--HEAD-->
   </head>

@@ -71,6 +71,15 @@ pub async fn get_html_box_plugins(
         include_str!("html/box_plugins.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
     Ok(content::RawHtml(html))
 }
+#[get("/box_raw.html")]
+pub async fn get_html_box_raw(
+    db: rocket_db_pools::Connection<AtreaSettingsDb>,
+) -> Result<content::RawHtml<String>, Status> {
+    let extra_head: String = get_extra_head(db, "box_raw").await?;
+    let html: String =
+        include_str!("html/box_raw.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
+    Ok(content::RawHtml(html))
+}
 #[get("/box_recs.html")]
 pub async fn get_html_box_recs(
     db: rocket_db_pools::Connection<AtreaSettingsDb>,
@@ -106,6 +115,11 @@ pub async fn get_html_index(
 // ######
 // # JS #
 // ######
+
+#[get("/atrea.js")]
+pub async fn get_js_atrea() -> content::RawJavaScript<&'static [u8]> {
+    content::RawJavaScript(include_bytes!("html/atrea.js"))
+}
 
 #[get("/box_channel.js")]
 pub async fn get_js_box_channel() -> content::RawJavaScript<&'static [u8]> {

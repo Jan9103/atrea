@@ -5,11 +5,13 @@
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="box_style.css">
     <script src="./libs/force-graph.min.js"></script>
-    <script defer>
+    <script defer type="module">
+      import{ce,cr}from"./atrea.js";
       // let params=new URLSearchParams(window.location.search);
       // let data_source=params.get("data_source");
       const data_source="./api/raids/force_graph_data";
       fetch(data_source)
+        .then(cr)
         .then(response=>response.json())
         .then((gData)=>{
           const graph=new ForceGraph()
@@ -30,7 +32,7 @@
               //.linkDirectionalParticleSpeed(d => d.raidcount * 0.001)
               ;
         })
-        .catch(error=>console.error('Error:',error));
+        .catch(ce);
     </script>
     <!--HEAD-->
   </head>

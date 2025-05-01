@@ -1,6 +1,5 @@
 window.onmessage=(event)=>{
   let msg=JSON.parse(event.data);
-  console.log("MAILBOX: "+event.data);
   switch(msg["action"]){
     case "view_channel":
       new WinBox("Channel: "+msg["name"], {
@@ -16,7 +15,7 @@ window.onmessage=(event)=>{
       break;
     case "open_help":
       if(!msg["site"].match(/^[a-z]+$/)) {
-        console.error("ERROR: invalid help page: "+event.data);
+        console.error("ERROR: invalid help page: "+event.data);  // TODO: popup
         return;
       }
       new WinBox("Help: "+msg["title"], {
@@ -50,8 +49,16 @@ window.onmessage=(event)=>{
         background: "#000",
       });
       break;
+    case "show_error":
+      new WinBox("Error", {
+        url: "./box_raw.html?el="+encodeURIComponent(JSON.stringify(msg["el"])),
+        background: "#a00",
+        x: "center",
+        y: "center",
+      });
+      break;
     default:
-      console.error("ERROR: invalid incomming message (unknown action): "+event.data);
+      console.error("ERROR: invalid incomming message (unknown action): "+event.data);  // TODO: popup
       return;
   };
 };

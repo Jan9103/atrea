@@ -1,13 +1,7 @@
 import {r,g,x,t,u} from "./libs/xeact.js";
-//import {r,g,x,t,u};
-const n=(e)=>document.createElement(e);
+import{ce,n,send_msg}from"./atrea.js";
 
-const new_box_recs=(alg_name)=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "show_recs",
-    "alg": alg_name,
-  }));
-};
+const new_box_recs=(alg_name)=>{send_msg("show_recs",{"alg":alg_name});};
 
 const render_rec_alg=(ul_node,alg)=>{
     let li_node=n("li");
@@ -27,44 +21,23 @@ fetch("api/recs/algorithms/general")
       render_rec_alg(ul_node,alg);
     }
   })
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 
 g("nav_rec_help").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "open_help",
+  send_msg("open_help",{
     "site": "recs",
     "title": "Recommendations",
-  }));
+  });
 };
 
 g("nav_credits").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "open_help",
+  send_msg("open_help",{
     "site": "credits",
     "title": "Credits",
-  }));
+  });
 };
 
-g("nav_known_viewers").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "open_known_viewers"
-  }))
-};
-
-g("nav_liked_channels").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "open_liked_channels"
-  }));
-};
-
-g("nav_rel_graph").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "show_rel_graph",
-  }));
-};
-
-g("nav_plugins").onclick=()=>{
-  window.top.postMessage(JSON.stringify({
-    "action": "show_plugins",
-  }));
-};
+g("nav_known_viewers").onclick=()=>{send_msg("open_known_viewers");};
+g("nav_liked_channels").onclick=()=>{send_msg("open_liked_channels");};
+g("nav_rel_graph").onclick=()=>{send_msg("show_rel_graph");};
+g("nav_plugins").onclick=()=>{send_msg("show_plugins");};

@@ -1,0 +1,33 @@
+<!DOCTYPE HTML>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script type="module">
+      import{r}from"./libs/xeact.js";
+      const ce=(p,el)=>{
+        let e=document.createElement(el["_"]);
+        for(const k in el){
+          // "in" does not work for some reason
+          if(k=="_"||k=="c"||k=="t"){continue;}
+          e.setAttribute(k,el[k]);
+        }
+        if("t"in el){e.innerText=el["t"];}
+        if("c"in el){for(const cel of el["c"]){ce(e,cel);}}
+        p.appendChild(e);
+      };
+      let params=new URLSearchParams(window.location.search);
+      // for some reason "body" does not exist when using defer
+      r(()=>{
+        let p=document.getElementById("body");
+        for(const el of JSON.parse(params.get("el"))){
+          ce(p,el);
+        }
+      });
+    </script>
+    <!--HEAD-->
+  </head>
+  <body id="body">
+  </body>
+</html>

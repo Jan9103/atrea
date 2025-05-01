@@ -1,13 +1,12 @@
 import {g} from "./libs/xeact.js";
-const n=(e)=>document.createElement(e);
+import{cr,ce,n,send_msg}from"./atrea.js";
 
 const open_channel=(click_event)=>{
   let channel=click_event.target.innerText.toLowerCase().trim();
-  window.top.postMessage(JSON.stringify({
-    "action": "view_channel",
+  send_msg("view_channel",{
     "name": channel,
     "login": channel
-  }));
+  });
 };
 
 const fill_raid_table=(table,data,ir)=>{
@@ -47,6 +46,7 @@ var params = new URLSearchParams(window.location.search);
 var channel = params.get("login");
 
 fetch("api/channel/"+channel+"/twitch_info")
+  .then(cr)
   .then(response=>response.json())
   .then(res=>{
     g("cvi_img").src=res["profile_image_url"];
@@ -58,27 +58,32 @@ fetch("api/channel/"+channel+"/twitch_info")
     g("cvi_created").innerText=created_date.toISOString().replace('T', ' ').slice(0, -5);
     g("cvi_b_type").innerText=res["broadcaster_type"];
   })
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 
 fetch("api/raids/to/"+channel+"/stats")
+  .then(cr)
   .then(response=>response.json())
   .then(incomming_raiders=>fill_raid_table(g("cvi_raids_i"),incomming_raiders,true))
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 fetch("api/raids/from/"+channel+"/stats")
+  .then(cr)
   .then(response=>response.json())
   .then(incomming_raiders=>fill_raid_table(g("cvi_raids_o"),incomming_raiders,false))
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 
 fetch("api/shoutouts/to/"+channel+"/stats")
+  .then(cr)
   .then(response=>response.json())
   .then(incomming_so=>fill_so_table(g("cvi_so_i"),incomming_so,true))
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 fetch("api/shoutouts/from/"+channel+"/stats")
+  .then(cr)
   .then(response=>response.json())
   .then(incomming_so=>fill_so_table(g("cvi_so_o"),incomming_so,false))
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);
 
 fetch("api/channel/"+channel+"/known_viewers")
+  .then(cr)
   .then(response=>response.json())
   .then((viewers)=>{
     let table=g("cvi_known_viewers");
@@ -89,4 +94,4 @@ fetch("api/channel/"+channel+"/known_viewers")
       table.appendChild(tr);
     });
   })
-  .catch(error=>console.error('Error:',error));
+  .catch(ce);

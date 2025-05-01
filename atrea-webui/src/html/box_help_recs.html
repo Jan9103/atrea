@@ -6,7 +6,7 @@
     <link rel="stylesheet" href="box_style.css">
     <script defer type="module">
       import {g} from "./libs/xeact.js";
-      const n=(e)=>document.createElement(e);
+      import{cr,ce,n}from"./atrea.js";
 
       const new_box_recs=(click_event)=>{
         let alg_name=click_event.target.innerText.trim();
@@ -37,9 +37,10 @@
       };
 
       fetch("api/recs/algorithms/general")
+        .then(cr)
         .then(response=>response.json())
         .then(apply_res)
-        .catch(error=>console.error('Error:',error));
+        .catch(ce);
     </script>
     <!--HEAD-->
   </head>

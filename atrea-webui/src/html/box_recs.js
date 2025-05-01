@@ -1,19 +1,31 @@
 import {g,t} from "./libs/xeact.js";
-const n=(e)=>document.createElement(e);
+import{cr,ce,n,send_msg}from"./atrea.js";
 const PAGESIZE=50;
 
 const fetch_details=(login,img_node,name_node,desc_node)=>{
   fetch("api/channel/"+login+"/twitch_info")
-    .then(response=>response.json())
-    .then(res=>{
-      img_node.src=res["profile_image_url"];
-      var name=res["display_name"];
-      if(res["broadcaster_type"]!=""){name=name+" ("+res["broadcaster_type"]+")"}
-      name_node.innerText=res["display_name"];
-      name_node.onclick=show_channel;
-      desc_node.innerText=res["description"].split("\n")[0];
+    .then(response=>{
+      if(response.ok){
+        return response.json();
+      }else if(response.status==404){
+        return null;
+      }else{
+        throw new Error("Not 2xx response from "+response.url, {"cause": response});
+      }
     })
-    .catch(error=>console.error('Error:',error));
+    .then(res=>{
+      if(res!=null){
+        img_node.src=res["profile_image_url"];
+        var name=res["display_name"];
+        if(res["broadcaster_type"]!=""){name=name+" ("+res["broadcaster_type"]+")"}
+        name_node.innerText=res["display_name"];
+        name_node.onclick=show_channel;
+        desc_node.innerText=res["description"].split("\n")[0];
+      }else{
+        desc_node.innerText="[Not in database]";
+      }
+    })
+    .catch(ce);
 };
 
 const append_render=(channels)=>{
@@ -50,19 +62,19 @@ const render_more=()=>{
   let alg=params.get("algo");
   let offset=g("recommend_channels").childNodes.length;
   fetch("api/recs/general/"+alg+"?limit="+PAGESIZE+"&offset="+offset)
+    .then(cr)
     .then(response=>response.json())
     .then(append_render)
-    .catch(error=>console.error('Error:',error));
+    .catch(ce);
 }
 
 const show_channel=(click_event)=>{
   let name=click_event.target.innerText.trim();
   let login=click_event.target.getAttribute("data-login");
-  window.top.postMessage(JSON.stringify({
-    "action": "view_channel",
+  send_msg("view_channel",{
     "name": name,
     "login": login
-  }));
+  });
 };
 
 
