@@ -8,12 +8,23 @@
       import {g} from "./libs/xeact.js";
       const n=(e)=>document.createElement(e);
 
+      const new_box_recs=(click_event)=>{
+        let alg_name=click_event.target.innerText.trim();
+        window.top.postMessage(JSON.stringify({
+          "action": "show_recs",
+          "alg": alg_name,
+        }));
+      };
+
       const apply_res=res=>{
         let algos=g("algos");
         res.forEach((data)=>{
           var algo=n("div");
           var h2=n("h2");
-          h2.innerText=data["name"];
+          var btn=n("button");
+          btn.onclick=new_box_recs;
+          btn.innerText=data["name"];
+          h2.appendChild(btn);
           algo.appendChild(h2);
           var pn=n("p");
           pn.innerText=data["description"];
