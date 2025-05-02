@@ -5,11 +5,12 @@ use rocket::{
 use rocket_db_pools::sqlx::{self, Row};
 use sqlx::sqlite::SqliteRow;
 use std::{
+    collections::HashMap,
     fs,
     path::{Path, PathBuf},
 };
 
-use crate::AtreaSettingsDb;
+use crate::{json_escape_string, AtreaSettingsDb};
 
 #[get("/get_css_plugin?<plugin_name>&<css_name>")]
 pub async fn get_css(plugin_name: &str, css_name: &str) -> Result<content::RawCss<String>, Status> {
@@ -30,6 +31,7 @@ pub async fn get_css(plugin_name: &str, css_name: &str) -> Result<content::RawCs
 }
 #[get("/get_js_plugin?<plugin_name>&<js_name>")]
 pub async fn get_js(
+    mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
     plugin_name: &str,
     js_name: &str,
 ) -> Result<content::RawJavaScript<String>, Status> {
@@ -40,13 +42,36 @@ pub async fn get_js(
     if !file_path.is_file() {
         return Err(Status::NotFound);
     }
-    match fs::read_to_string(file_path) {
-        Ok(v) => Ok(content::RawJavaScript(v)),
+    let mut js_text: String = match fs::read_to_string(file_path) {
+        Ok(v) => v,
         Err(err) => {
             eprintln!("{}", err);
-            Err(Status::InternalServerError)
+            return Err(Status::InternalServerError);
         }
-    }
+    };
+    match sqlx::query(
+        "SELECT setting_key, setting_value FROM plugin_settings WHERE plugin_name == ?;",
+    )
+    .bind(plugin_name)
+    .fetch_all(&mut **db)
+    .await
+    {
+        Ok(res) => {
+            for setting in res.into_iter() {
+                let setting_key: &str = setting.get(0);
+                let setting_value: &str = setting.get(1);
+                js_text = js_text.replace(
+                    format!("\"@!{}!@\"", setting_key).as_str(),
+                    format!("\"{}\"", crate::json_escape_string(setting_value)).as_str(),
+                );
+            }
+        }
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(Status::InternalServerError);
+        }
+    };
+    Ok(content::RawJavaScript(js_text))
 }
 
 #[get("/api/plugins/enable/<plugin_name>")]
@@ -81,36 +106,71 @@ pub async fn disable_plugin(
     Ok(Status::Ok)
 }
 
+#[get("/api/plugins/update_setting/<plugin_name>/<setting_key>/<setting_value>")]
+pub async fn update_setting(
+    mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
+    plugin_name: &str,
+    setting_key: &str,
+    setting_value: &str,
+) -> Result<Status, Status> {
+    if let Err(err) = sqlx::query(
+        "UPDATE plugin_settings SET setting_value = ? WHERE plugin_name == ? AND setting_key == ?;",
+    )
+    .bind(setting_value)
+    .bind(plugin_name)
+    .bind(setting_key)
+    .execute(&mut **db)
+    .await
+    {
+        eprintln!("{}", err);
+        return Err(Status::InternalServerError);
+    };
+    Ok(Status::Ok)
+}
+
 #[get("/api/plugins/list")]
 pub async fn list(
     mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
 ) -> Result<RawJson<String>, Status> {
-    let res: Vec<SqliteRow> = match sqlx::query(
-        r#"
-        SELECT JSON_OBJECT(
-            'plugin_name', plugin_name,
-            'description', description,
-            'enabled', enabled
-        ) FROM plugins p
-        ORDER BY p.plugin_name ASC;
-        "#,
+    match sqlx::query(
+        "SELECT plugin_name, description, enabled FROM plugins ORDER BY plugin_name ASC;",
     )
     .fetch_all(&mut **db)
     .await
     {
-        Ok(res) => res,
+        Ok(res) => {
+            let mut plugins: Vec<String> = Vec::with_capacity(res.len());
+            for ir in res.into_iter() {
+                let plugin_name: &str = ir.get(0);
+                let description: &str = ir.get(1);
+                let enabled: bool = ir.get(2);
+                let settings: String = match sqlx::query("SELECT setting_key, setting_value FROM plugin_settings WHERE plugin_name == ?;").bind(plugin_name).fetch_all(&mut **db).await {
+                    Ok(v) => format!("{{{}}}", v.into_iter().map(|sir| -> Result<String, Status> {
+                        let setting_key: &str = sir.get(0);
+                        let setting_value: &str = sir.get(1);
+                        Ok(format!("\"{}\":\"{}\"", json_escape_string(setting_key), json_escape_string(setting_value)))
+                    }).collect::<Result<Vec<String>, Status>>()?.join(",")),
+                    Err(err) => {
+                        eprintln!("{}", err);
+                        return Err(Status::InternalServerError);
+                    }
+                };
+                plugins.push(format!(
+                    r#"{{"plugin_name": "{}", "description": "{}", "enabled": {}, "settings": {}}}"#,
+                    json_escape_string(plugin_name),
+                    json_escape_string(description),
+                    if enabled { "true" } else { "false" },
+                    settings,
+                ));
+            }
+
+            Ok(RawJson(format!("[{}]", plugins.join(","))))
+        }
         Err(err) => {
             eprintln!("{}", err);
-            return Err(Status::InternalServerError);
+            Err(Status::InternalServerError)
         }
-    };
-    Ok(RawJson(format!(
-        "[{}]",
-        res.into_iter()
-            .map(|r| r.get(0))
-            .collect::<Vec<String>>()
-            .join(",")
-    )))
+    }
 }
 
 #[get("/api/plugins/update_db")]
@@ -131,10 +191,23 @@ pub async fn update_db(
                 return Err(Status::InternalServerError);
             }
         };
+    let changed_settings: Vec<(String,String,String)> = match sqlx::query("SELECT plugin_name, setting_key, setting_value FROM plugin_settings WHERE setting_value != setting_default").fetch_all(&mut **db).await {
+        Ok(res) => res.into_iter().map(|it| {
+            let plugin_name: &str = it.get(0);
+            let setting_key: &str = it.get(1);
+            let setting_value: &str = it.get(2);
+            (plugin_name.into(), setting_key.into(), setting_value.into())
+        }).collect::<Vec<(String, String, String)>>(),
+        Err(err) => {
+            eprintln!("{}", err);
+            return Err(Status::InternalServerError);
+        }
+    };
     // empty db
-    if let Err(err) = sqlx::query("DELETE FROM plugins; DELETE FROM plugin_files;")
-        .execute(&mut **db)
-        .await
+    if let Err(err) =
+        sqlx::query("DELETE FROM plugins; DELETE FROM plugin_files; DELETE FROM plugin_settings")
+            .execute(&mut **db)
+            .await
     {
         eprintln!("{}", err);
         return Err(Status::InternalServerError);
@@ -149,6 +222,26 @@ pub async fn update_db(
                             if ft.is_dir() {
                                 register_plugin(&mut db, &dir_entry.path(), &enabled_plugins)
                                     .await?;
+                                let plugin_name: String = dir_entry
+                                    .file_name()
+                                    .into_string()
+                                    .expect("Path not string compatible");
+                                for setting in
+                                    changed_settings.iter().filter(|si| si.0 == plugin_name)
+                                {
+                                    if let Err(err) = sqlx::query(
+                                        "UPDATE plugin_settings SET setting_value = ? WHERE plugin_name == ? AND setting_key == ?;",
+                                    )
+                                    .bind(&setting.2)
+                                    .bind(&setting.0)
+                                    .bind(&setting.1)
+                                    .execute(&mut **db)
+                                    .await
+                                    {
+                                        eprintln!("{}", err);
+                                        return Err(Status::InternalServerError);
+                                    };
+                                }
                             }
                         }
                         Err(err) => {
@@ -210,6 +303,36 @@ async fn register_plugin(
                         eprintln!("{}", err);
                         return Err(Status::InternalServerError);
                     };
+                    match json_root.get("settings") {
+                        Some(serde_json::Value::Object(map)) => {
+                            for (k, rv) in map.into_iter() {
+                                if let serde_json::Value::String(v) = rv {
+                                    if let Err(err) = sqlx::query("INSERT INTO plugin_settings ( plugin_name, setting_key, setting_value, setting_default ) VALUES ( ?, ?, ?, ? )")
+                                        .bind(plugin_name)
+                                        .bind(k)
+                                        .bind(v)
+                                        .bind(v)
+                                        .execute(&mut *db)
+                                        .await
+                                    {
+                                        eprintln!("{}", err);
+                                        return Err(Status::InternalServerError);
+                                    };
+                                } else {
+                                    eprintln!(
+                                        "ERROR: plugin {} contains a non-string default value",
+                                        plugin_name
+                                    );
+                                    return Err(Status::InternalServerError);
+                                }
+                            }
+                        }
+                        Some(_) => {
+                            eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (invalid settings)");
+                            return Err(Status::InternalServerError);
+                        }
+                        None => (),
+                    }
                 }
                 Ok(_) => {
                     eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?}");

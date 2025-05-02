@@ -50,6 +50,15 @@
           .catch(ce);
       };
 
+      const setting_set_button_click=(event)=>{
+        let new_value=g(event.target.getAttribute("data-pfid")).value;
+        let plugin_name=event.target.getAttribute("data-plugin");
+        let setting_key=event.target.getAttribute("data-skey");
+        fetch("api/plugins/update_setting/"+encodeURIComponent(plugin_name)+"/"+encodeURIComponent(setting_key)+"/"+encodeURIComponent(new_value))
+          .then(cr)
+          .catch(ce);
+      };
+
       const add_plugin=data=>{
         var li=n("li");
         var h2=n("h2");
@@ -63,6 +72,30 @@
         var p_node=n("p");
         p_node.innerText=data["description"];
         li.appendChild(p_node);
+        if(Object.keys(data["settings"]).length!==0){
+          var h3=n("h3");h3.innerText="Settings";li.appendChild(h3);
+          for(const setting_key in data["settings"]) {
+            var sdiv=n("div");
+            var slabel=n("label");
+            var pfid="plugin-_-"+data["plugin_name"]+"-_-"+setting_key;
+            slabel.setAttribute("for",pfid);
+            slabel.innerText=setting_key;
+            sdiv.appendChild(slabel);
+            var sinput=n("input");
+            sinput.setAttribute("id",pfid);
+            sinput.setAttribute("value",data["settings"][setting_key]);
+            sinput.setAttribute("type","text");
+            sdiv.appendChild(sinput);
+            var sbtn=n("button");
+            sbtn.setAttribute("data-pfid",pfid);
+            sbtn.setAttribute("data-plugin",data["plugin_name"]);
+            sbtn.setAttribute("data-skey",setting_key);
+            sbtn.onclick=setting_set_button_click;
+            sbtn.innerText="apply";
+            sdiv.appendChild(sbtn);
+            li.appendChild(sdiv);
+          }
+        }
         g("plugin_list").appendChild(li);
       };
 

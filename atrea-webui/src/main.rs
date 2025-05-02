@@ -35,6 +35,7 @@ fn rocket() -> _ {
                 api_plugins::get_js,
                 api_plugins::list,
                 api_plugins::update_db,
+                api_plugins::update_setting,
                 api_raids::force_graph_data,
                 api_raids::raids_from,
                 api_raids::raids_from_to,
