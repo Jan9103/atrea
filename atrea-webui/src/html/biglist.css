@@ -1,7 +1,8 @@
 .biglist {
-  width: 95%;
-  display: flex;
-  flex-wrap: wrap;
+  /*width:95%;*/
+  display:flex;
+  flex-wrap:wrap;
+  justify-content:left;
 }
 
 .biglist>div {

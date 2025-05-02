@@ -1,6 +1,7 @@
 .ganymede_vod_list_div{
   display:flex;
   flex-wrap:wrap;
+  justify-content:left;
 }
 .ganymede_vod_list_div>div{
   width:300px;

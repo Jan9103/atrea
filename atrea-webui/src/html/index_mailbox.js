@@ -1,4 +1,5 @@
 window.onmessage=(event)=>{
+  console.log(event);
   let msg=JSON.parse(event.data);
   switch(msg["action"]){
     case "view_channel":
@@ -11,6 +12,9 @@ window.onmessage=(event)=>{
       new WinBox("Recommendations ("+msg["alg"]+")", {
         url: "./box_recs.html?algo="+encodeURIComponent(msg["alg"]),
         background: "#066",
+        // for some reason this does nothing
+        //width: (window.screen.width>2000?"1150px":"550px"),
+        //height: "100%",
       });
       break;
     case "open_help":
