@@ -1,0 +1,21 @@
+.ganymede_vod_list_div{
+  display:flex;
+  flex-wrap:wrap;
+}
+.ganymede_vod_list_div>div{
+  width:300px;
+  margin:5px;
+  padding:5px;
+  border-radius:15px;
+  background-color:var(--bg-alt);
+  height:fix-content;
+  overflow:hidden;
+}
+
+.ganymede_vod_list_div>div>img{
+  width:inherit;
+}
+
+.ganymede_vod_list_div>div>span{
+  white-space:nowrap;
+}

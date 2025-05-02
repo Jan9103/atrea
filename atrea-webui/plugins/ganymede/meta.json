@@ -1,0 +1,10 @@
+{
+  "description": "Somewhat integrate with ganymede",
+  "settings": {
+    "base_url": "http://127.0.0.1:4800",
+    "clip_count": "6",
+    "archive_count": "3",
+    "upload_count": "3",
+    "highlight_count": "3"
+  }
+}

@@ -61,8 +61,8 @@ pub async fn get_js(
                 let setting_key: &str = setting.get(0);
                 let setting_value: &str = setting.get(1);
                 js_text = js_text.replace(
-                    format!("\"@!{}!@\"", setting_key).as_str(),
-                    format!("\"{}\"", crate::json_escape_string(setting_value)).as_str(),
+                    format!("@!{}!@", setting_key).as_str(),
+                    crate::json_escape_string(setting_value).as_str(),
                 );
             }
         }
