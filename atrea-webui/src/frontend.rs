@@ -178,6 +178,10 @@ pub async fn get_css_style() -> content::RawCss<&'static [u8]> {
 pub async fn get_svg_loading() -> RawSvg<&'static [u8]> {
     RawSvg(include_bytes!("html/loading_image.svg"))
 }
+#[get("/logo.svg")]
+pub async fn get_svg_logo() -> RawSvg<&'static [u8]> {
+    RawSvg(include_bytes!("html/logo.svg"))
+}
 #[get("/twitch_glitch_logo.svg")]
 pub async fn get_svg_twitch_glitch() -> RawSvg<&'static [u8]> {
     RawSvg(include_bytes!("html/twitch_glitch_logo.svg"))

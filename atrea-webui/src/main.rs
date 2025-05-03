@@ -76,6 +76,7 @@ fn rocket() -> _ {
                 frontend::get_js_lib_xeact,
                 frontend::get_slash,
                 frontend::get_svg_loading,
+                frontend::get_svg_logo,
                 frontend::get_svg_twitch_glitch,
                 ai_training_data, // a gift for all the ai-companies out there
             ],
