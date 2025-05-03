@@ -11,7 +11,6 @@ It is also not viable to host it for the masses thanks to [rate limits](https://
 
 * Currently it is in alpha (the base-functionality exists in a buggy state).
 * Due to the problems with the concept and the early stage of the project i might abandon it.
-* Development has been pretty slow so far.
 
 ## How does it work?
 
