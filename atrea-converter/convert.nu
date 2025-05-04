@@ -191,9 +191,10 @@ def get_channel_data []: nothing -> nothing {
     #stor open
     #| query db 'SELECT DISTINCT name FROM (SELECT DISTINCT (r.raider || r.target) AS name FROM raids r UNION SELECT DISTINCT lc.name FROM liked_channels lc)'
     #| get name
-    (stor open).raids.raider
-    | append ((stor open).raids.target)
+    (stor open).raid_connections.raider
+    | append ((stor open).raid_connections.target)
     | append ((stor open).liked_channels.name)
+    | append ((stor open).shoutout_connections.target)
     | uniq
     | url encode -a
     | each {|i| $'login=($i)'}
