@@ -9,18 +9,20 @@ struct Algorithm {
     pub sql: &'static str,
     pub description: &'static str,
     pub used_data: &'static [&'static str],
+    pub is_primary: bool,
 }
 impl Algorithm {
     pub fn api_json(&self) -> String {
         format!(
-            r#"{{"name": "{}", "description": "{}", "used_data": [{}]}}"#,
+            r#"{{"name": "{}", "description": "{}", "used_data": [{}], "is_primary": {}}}"#,
             json_escape_string(self.name),
             json_escape_string(self.description),
             self.used_data
                 .iter()
                 .map(|i| { format!(r#""{}""#, json_escape_string(i)) })
                 .collect::<Vec<String>>()
-                .join(",")
+                .join(","),
+            if self.is_primary { "true" } else { "false" },
         )
     }
 }
@@ -31,42 +33,63 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
         sql: include_str!("sql/recs/brta1.sql"),
         description: "Basic raid trace analysis v1. Mainly finds friendgroups.",
         used_data: &["raids"],
+        is_primary: false,
     },
     Algorithm {
         name: "brta2",
         sql: include_str!("sql/recs/brta2.sql"),
         description: "Basic raid trace analysis v2 (improved handling of big datasets). Mainly finds friendgroups.",
         used_data: &["raids"],
+        is_primary: true,
     },
     Algorithm {
         name: "bsc",
         sql: include_str!("sql/recs/bsc.sql"),
         description: "Basic shoutout connections.",
         used_data: &["shoutouts"],
+        is_primary: false,
     },
     Algorithm {
         name: "bsv",
         sql: include_str!("sql/recs/bsv.sql"),
         description: "Basic shared viewers. Heavily favors big streamers.",
         used_data: &["joins"],
+        is_primary: false,
     },
     Algorithm {
         name: "rava1",
         sql: include_str!("sql/recs/rava1.sql"),
         description: "Raid and viewer analysis v1 (vixen1 + brta1). Can be pretty slow and tends to find ones you never heard of.",
         used_data: &["raids", "joins"],
+        is_primary: false,
     },
     Algorithm {
         name: "rava2",
         sql: include_str!("sql/recs/rava2.sql"),
         description: "Raid and viewer analysis v2 (vixen1 + brta2). Can be pretty slow and tends to find ones you never heard of.",
         used_data: &["raids", "joins"],
+        is_primary: false,
+    },
+    Algorithm {
+        name: "rava3",
+        sql: include_str!("sql/recs/rava3.sql"),
+        description: "Raid and viewer analysis v3 (vixen2 + brta2). Can be pretty slow.",
+        used_data: &["raids", "joins"],
+        is_primary: true,
     },
     Algorithm {
         name: "vixen1",
         sql: include_str!("sql/recs/vixen1.sql"),
         description: "Weighted shared viewer analysis. Finds loosely similar streamers.",
         used_data: &["joins"],
+        is_primary: false,
+    },
+    Algorithm {
+        name: "vixen2",
+        sql: include_str!("sql/recs/vixen2.sql"),
+        description: "Weighted shared viewer analysis. Finds similar channels around a few corners.",
+        used_data: &["joins"],
+        is_primary: false,
     },
 ];
 

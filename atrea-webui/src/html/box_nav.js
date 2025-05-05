@@ -18,7 +18,7 @@ fetch("api/recs/algorithms/general")
   .then((algos)=>{
     let ul_node=g("nav_rec_alg_inject");
     for(const alg of algos){
-      render_rec_alg(ul_node,alg);
+      if(alg["is_primary"]){render_rec_alg(ul_node,alg);}
     }
   })
   .catch(ce);
