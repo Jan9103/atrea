@@ -110,6 +110,7 @@ def csv_to_sqlite [
   | par-each {|file|
     log info $"  Converting ($file | path basename) to sqlite.."
     smart_csv_cat $file
+    | where $it.target != ""
     | stor insert -t shoutouts | null
   } | null
 }
