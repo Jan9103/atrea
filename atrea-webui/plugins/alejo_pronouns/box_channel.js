@@ -1,6 +1,9 @@
 import {g,r,t} from "./libs/xeact.js";
+import{ce,cr}from"./atrea.js";
 const n=(e)=>document.createElement(e);
 
+// cache of https://pronouns.alejo.io/api/pronouns
+// since it hasn't changed in years it seems to be reasonable to half the requests by caching this
 const PRONOUN_TABLE = {
   "aeaer": "ae/aer",
   "any": "any",
@@ -25,6 +28,7 @@ r(()=>{
   var login_name=params.get("login");
 
   fetch("https://pronouns.alejo.io/api/users/"+login_name)
+    .then(cr)
     .then(response=>response.json())
     .then(res=>{
       if(res.length==1){
@@ -34,5 +38,5 @@ r(()=>{
         name_node.parentNode.insertBefore(t(" ("+pr+")"), name_node.nextSibling);
       }
     })
-    .catch(error=>console.error('Error:',error));
+    .catch(ce);
 });

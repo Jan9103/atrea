@@ -1,3 +1,4 @@
 {
-  "description": "Fetch extra info from twitchtracker.com"
+  "description": "Fetch extra info from twitchtracker.com",
+  "category": "integration"
 }

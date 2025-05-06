@@ -1,5 +1,6 @@
 {
   "description": "Somewhat integrate with ganymede",
+  "category": "integration",
   "settings": {
     "base_url": "http://127.0.0.1:4800",
     "clip_count": "6",

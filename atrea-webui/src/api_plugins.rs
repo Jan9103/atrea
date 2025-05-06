@@ -133,7 +133,7 @@ pub async fn list(
     mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
 ) -> Result<RawJson<String>, Status> {
     match sqlx::query(
-        "SELECT plugin_name, description, enabled FROM plugins ORDER BY plugin_name ASC;",
+        "SELECT plugin_name, description, enabled, category FROM plugins ORDER BY plugin_name ASC;",
     )
     .fetch_all(&mut **db)
     .await
@@ -144,6 +144,7 @@ pub async fn list(
                 let plugin_name: &str = ir.get(0);
                 let description: &str = ir.get(1);
                 let enabled: bool = ir.get(2);
+                let category: &str = ir.get(3);
                 let settings: String = match sqlx::query("SELECT setting_key, setting_value FROM plugin_settings WHERE plugin_name == ?;").bind(plugin_name).fetch_all(&mut **db).await {
                     Ok(v) => format!("{{{}}}", v.into_iter().map(|sir| -> Result<String, Status> {
                         let setting_key: &str = sir.get(0);
@@ -156,11 +157,12 @@ pub async fn list(
                     }
                 };
                 plugins.push(format!(
-                    r#"{{"plugin_name": "{}", "description": "{}", "enabled": {}, "settings": {}}}"#,
+                    r#"{{"plugin_name": "{}", "description": "{}", "enabled": {}, "settings": {}, "category": "{}"}}"#,
                     json_escape_string(plugin_name),
                     json_escape_string(description),
                     if enabled { "true" } else { "false" },
                     settings,
+                    category,
                 ));
             }
 
@@ -293,10 +295,19 @@ async fn register_plugin(
                         }
                         None => &String::from(""),
                     };
-                    if let Err(err) = sqlx::query("INSERT INTO plugins ( plugin_name, description, enabled ) VALUES ( ?, ?, ? )")
+                    let category: &String = match json_root.get("category") {
+                        Some(serde_json::Value::String(v)) => v,
+                        Some(_) => {
+                            eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (invalid description)");
+                            return Err(Status::InternalServerError);
+                        }
+                        None => &String::from("other"),
+                    };
+                    if let Err(err) = sqlx::query("INSERT INTO plugins ( plugin_name, description, enabled, category ) VALUES ( ?, ?, ?, ? )")
                         .bind(plugin_name)
                         .bind(description)
                         .bind(enabled_plugins.contains(&String::from(plugin_name)))
+                        .bind(category)
                         .execute(&mut *db)
                         .await
                     {

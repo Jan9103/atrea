@@ -1,6 +1,7 @@
 CREATE TABLE IF NOT EXISTS plugins (
   plugin_name TEXT,
   description TEXT,
+  category TEXT,
   enabled INTEGER  -- boolean
 );
 

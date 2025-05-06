@@ -1,4 +1,5 @@
 import {g,r,t} from "./libs/xeact.js";
+import{cr,ce}from"./atrea.js";
 const n=(e)=>document.createElement(e);
 
 const gen_tr=(h_text,d_text)=>{
@@ -17,6 +18,7 @@ r(()=>{
   var login_name=params.get("login");
   
   fetch("https://twitchtracker.com/api/channels/summary/"+login_name)
+    .then(cr)
     .then(response=>response.json())
     .then(res=>{
       let div=n("div");
@@ -43,5 +45,5 @@ r(()=>{
       div.appendChild(table);
       g("cvi_top").appendChild(div);
     })
-    .catch(error=>console.error('Error:',error));
+    .catch(ce);
 });

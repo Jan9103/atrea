@@ -22,13 +22,13 @@
         height: fit-content;
       }
 
-      h2 {
+      h3 {
         margin-top: 0;
       }
-      h2>button::before {
+      h3>button::before {
         content: '[';
       }
-      h2>button::after {
+      h3>button::after {
         content: ']';
       }
     </style>
@@ -59,9 +59,9 @@
           .catch(ce);
       };
 
-      const add_plugin=data=>{
+      const add_plugin=(data,parent)=>{
         var li=n("li");
-        var h2=n("h2");
+        var h2=n("h3");
         h2.innerText=data["plugin_name"].replaceAll("_", " ");
         var btn=n("button");
         btn.innerText=(data["enabled"]?"disable":"enable");
@@ -96,7 +96,7 @@
             li.appendChild(sdiv);
           }
         }
-        g("plugin_list").appendChild(li);
+        parent.appendChild(li);
       };
 
       const gen_plugin_list=()=>{
@@ -104,8 +104,19 @@
           .then(cr)
           .then(response=>response.json())
           .then((res)=>{
+            let categories=new Map([...new Set(res.map((i)=>i["category"]))].sort().map(i=>[i,n("ul")]));
+            console.log(categories);
+            let parent=g("plugin_list");
+            for(const[k,v]of categories){
+              let h2=n("h2");
+              h2.innerText=k;
+              parent.appendChild(h2);
+              parent.appendChild(v);
+            }
             res.forEach((data)=>{
-              add_plugin(data);
+              let category_node=categories.get(data["category"]);
+              console.log(category_node);
+              add_plugin(data, category_node);
             });
           })
           .catch(ce);
@@ -131,6 +142,6 @@
   <body>
     <p><b>NOTE:</b> Many changes won't be visible until you reload the window.</p>
     <button id="refresh_db">Check filesystem for changes</button>
-    <ul id="plugin_list"></ul>
+    <div id="plugin_list"></div>
   </body>
 </html>
