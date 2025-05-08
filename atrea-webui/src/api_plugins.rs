@@ -205,7 +205,7 @@ pub async fn update_db(
     };
     // empty db
     if let Err(err) =
-        sqlx::query("DELETE FROM plugins; DELETE FROM plugin_files; DELETE FROM plugin_settings")
+        sqlx::query("DELETE FROM plugins; DELETE FROM plugin_files; DELETE FROM plugin_settings; DELETE FROM plugin_algorithms;")
             .execute(&mut **db)
             .await
     {
