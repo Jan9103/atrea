@@ -3,9 +3,7 @@ use rocket::{
     response::content::{self, RawJson},
 };
 use rocket_db_pools::sqlx::{self, Row};
-use sqlx::sqlite::SqliteRow;
 use std::{
-    collections::HashMap,
     fs,
     path::{Path, PathBuf},
 };
@@ -314,6 +312,71 @@ async fn register_plugin(
                         eprintln!("{}", err);
                         return Err(Status::InternalServerError);
                     };
+                    match json_root.get("algorithms") {
+                        Some(serde_json::Value::Array(algo_list)) => {
+                            for algo in algo_list.into_iter() {
+                                match algo {
+                                    serde_json::Value::Object(algo_obj) => {
+                                        let algo_name: &String = match algo_obj.get("name") {
+                                            Some(serde_json::Value::String(v)) => v,
+                                            _ => {
+                                                eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithm name missing or not a string)");
+                                                return Err(Status::InternalServerError);
+                                            }
+                                        };
+                                        let algo_desc: &String = match algo_obj.get("description") {
+                                            Some(serde_json::Value::String(v)) => v,
+                                            None => &String::new(),
+                                            _ => {
+                                                eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithm description not a string)");
+                                                return Err(Status::InternalServerError);
+                                            }
+                                        };
+                                        let algo_used_data: &String = match algo_obj
+                                            .get("used_data")
+                                        {
+                                            Some(serde_json::Value::String(v)) => v,
+                                            None => &String::new(),
+                                            _ => {
+                                                eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithm used_data not a string)");
+                                                return Err(Status::InternalServerError);
+                                            }
+                                        };
+                                        let algo_is_primary: bool = match algo_obj.get("is_primary")
+                                        {
+                                            Some(serde_json::Value::Bool(v)) => *v,
+                                            None => false,
+                                            _ => {
+                                                eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithm is_primary not a bool)");
+                                                return Err(Status::InternalServerError);
+                                            }
+                                        };
+                                        if let Err(err) = sqlx::query("INSERT INTO plugin_algorithms ( algorithm_name, algorithm_description, plugin_name, is_primary, used_data ) VALUES ( ?, ?, ?, ?, ? )")
+                                            .bind(algo_name)
+                                            .bind(algo_desc)
+                                            .bind(plugin_name)
+                                            .bind(algo_is_primary)
+                                            .bind(algo_used_data)
+                                            .execute(&mut *db)
+                                            .await
+                                        {
+                                            eprintln!("{}", err);
+                                            return Err(Status::InternalServerError);
+                                        };
+                                    }
+                                    _ => {
+                                        eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithm not a record)");
+                                        return Err(Status::InternalServerError);
+                                    }
+                                }
+                            }
+                        }
+                        Some(_) => {
+                            eprintln!("Plugin parse issue: invalid meta.json at {json_file_path:?} (algorithms not a list)");
+                            return Err(Status::InternalServerError);
+                        }
+                        None => (),
+                    }
                     match json_root.get("settings") {
                         Some(serde_json::Value::Object(map)) => {
                             for (k, rv) in map.into_iter() {
