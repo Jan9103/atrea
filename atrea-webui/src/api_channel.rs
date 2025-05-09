@@ -1,4 +1,4 @@
-use crate::AtreaDb;
+use crate::{json_escape_string, AtreaDb};
 
 use rocket::http::Status;
 use rocket::response::content::RawJson;
@@ -81,4 +81,48 @@ pub async fn redirect_image(
             Err(Status::InternalServerError)
         }
     }
+}
+
+#[get("/api/channel/<channel>/force_graph_neighbours")]
+pub async fn force_graph_neighbours(
+    mut db: rocket_db_pools::Connection<AtreaDb>,
+    channel: &str,
+) -> Result<RawJson<String>, Status> {
+    let mut nodes: Vec<SqliteRow> =
+        match sqlx::query(include_str!("sql/graph/force_graph_neighbour_nodes.sql"))
+            .bind(channel)
+            .bind(channel)
+            .bind(channel)
+            .fetch_all(&mut **db)
+            .await
+        {
+            Ok(res) => res,
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(Status::InternalServerError);
+            }
+        };
+    let links: Vec<SqliteRow> =
+        match sqlx::query(include_str!("sql/graph/force_graph_neighbour_links.sql"))
+            .bind(channel)
+            .bind(channel)
+            .fetch_all(&mut **db)
+            .await
+        {
+            Ok(res) => res,
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(Status::InternalServerError);
+            }
+        };
+    let nodes: Vec<String> = nodes.into_iter().map(|r| r.get(0)).collect::<Vec<String>>();
+    Ok(RawJson(format!(
+        r#"{{"nodes": [{}], "links": [{}]}}"#,
+        nodes.join(","),
+        links
+            .into_iter()
+            .map(|r| r.get(0))
+            .collect::<Vec<String>>()
+            .join(","),
+    )))
 }

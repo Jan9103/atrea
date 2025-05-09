@@ -26,6 +26,7 @@ fn rocket() -> _ {
         .mount(
             BASEPATH,
             routes![
+                api_channel::force_graph_neighbours,
                 api_channel::get_known_viewers,
                 api_channel::get_twitch_info,
                 api_channel::redirect_image,

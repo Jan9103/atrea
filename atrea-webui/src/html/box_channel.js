@@ -1,4 +1,4 @@
-import {g} from "./libs/xeact.js";
+import {x,g} from "./libs/xeact.js";
 import{cr,ce,n,send_msg}from"./atrea.js";
 
 const open_channel=(click_event)=>{
@@ -95,3 +95,51 @@ fetch("api/channel/"+channel+"/known_viewers")
     });
   })
   .catch(ce);
+  
+const render_neighbour_graph=()=>{
+  x(g("cvi_raid_neighbour_graph"));
+  fetch("api/channel/"+channel+"/force_graph_neighbours")
+    .then(cr)
+    .then(response=>response.json())
+    .then((gData)=>{
+      gData={
+        links:gData["links"],
+        nodes:gData["nodes"].map(n=>{
+          const img=new Image();
+          img.src="api/channel/"+n["id"]+"/image";
+          n["img"]=img;
+          //n["color"]=n["val"]==5?"#f00":(n["val"]==3?"#aa0":"#0f0");
+          return n;
+        }),
+      };
+      let ngc=g("cvi_raid_neighbour_graph");
+      const graph=new ForceGraph()
+        (ngc)
+          .graphData(gData)
+          .width(ngc.offsetWidth)
+          .height(ngc.offsetHeight)
+          .backgroundColor("#425")
+          .nodeCanvasObject(({ img, x, y }, ctx) => {
+            const size = 15;
+            ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+          })
+          .nodePointerAreaPaint((node, color, ctx) => {
+            const size = 15;
+            ctx.fillStyle = color;
+            ctx.fillRect(node.x - size / 2, node.y - size / 2, size, size);
+          })
+          .linkColor(()=>"#088")
+          .onNodeClick((node) => {
+            console.log(node);
+            window.top.postMessage(JSON.stringify({
+              "action": "view_channel",
+              "name": node["name"],
+              "login": node["id"],
+            }));
+          })
+          ;
+    })
+    .catch(ce);
+}
+
+g("cvi_raid_neighbour_graph_btn").onclick=render_neighbour_graph;

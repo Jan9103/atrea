@@ -4,6 +4,7 @@
     <meta charset="UTF-8"> 
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="box_style.css">
+    <script src="./libs/force-graph.min.js" async></script>
     <script src="box_channel.js" defer type="module"></script>
     <style>
       #cvi_top {
@@ -25,6 +26,14 @@
 
       #cvi_raids tr:nth-child(even) { background-color: var(--bg-alt); }
       #cvi_raids td:not(:first-child) { text-align: center; }
+
+      #cvi_raid_neighbour_graph {
+        max-height:60%;
+        max-width:100%;
+        width:1000px;
+        height:500px;
+        background-color:var(--bg-alt);
+      }
     </style>
     <!--HEAD-->
   </head>
@@ -65,6 +74,8 @@
       <table id="cvi_known_viewers">
         <tr><th>Viewer</th><th>Shared liked channels</th></tr>
       </table>
+      <h3>Neighbours</h3>
+      <div id="cvi_raid_neighbour_graph"><button id="cvi_raid_neighbour_graph_btn">render</button></div>
     </div>
   </body>
 </html>
