@@ -1,4 +1,4 @@
-use crate::{json_escape_string, AtreaDb};
+use crate::AtreaDb;
 
 use rocket::http::Status;
 use rocket::response::content::RawJson;

@@ -97,7 +97,7 @@ pub async fn list_general_algorithms(
                     json_escape_string(alg_name),
                     json_escape_string(alg_desc),
                     if is_primary {"true"} else {"false"},
-                    used_data.split_ascii_whitespace().into_iter().map(|i| format!("\"{}\"", json_escape_string(i))).collect::<Vec<String>>().join(",")
+                    used_data.split_ascii_whitespace().map(|i| format!("\"{}\"", json_escape_string(i))).collect::<Vec<String>>().join(",")
                 )
             }).collect::<Vec<String>>()
         }
@@ -124,14 +124,11 @@ pub async fn get_general(
     limit: Option<u32>,
     algorithm: &str,
 ) -> Result<RawJson<String>, Status> {
-    match AVAILABLE_GENERAL_ALGORITHMS
+    if let Some(alg) = AVAILABLE_GENERAL_ALGORITHMS
         .iter()
         .find(|i| i.name == algorithm)
     {
-        Some(alg) => {
-            return Ok(for_query(alg.sql, db, offset, limit).await?);
-        }
-        None => (),
+        return for_query(alg.sql, db, offset, limit).await;
     }
     match sqlx::query("SELECT algorithm_name, plugin_name FROM plugin_algorithms WHERE name == ?;")
         .bind(algorithm)
@@ -154,23 +151,21 @@ pub async fn get_general(
                 }
                 match std::fs::read_to_string(file_path) {
                     Ok(v) => {
-                        return Ok(for_query(v.as_str(), db, offset, limit).await?);
+                        return for_query(v.as_str(), db, offset, limit).await;
                     }
                     Err(err) => {
                         eprintln!("{}", err);
-                        return Err(Status::InternalServerError);
+                        Err(Status::InternalServerError)
                     }
                 }
             }
-            None => {
-                return Err(Status::BadRequest);
-            }
+            None => Err(Status::BadRequest),
         },
         Err(err) => {
             eprintln!("{}", err);
-            return Err(Status::InternalServerError);
+            Err(Status::InternalServerError)
         }
-    };
+    }
 }
 
 #[get("/api/recs/general/liked_channels?<offset>&<limit>")]

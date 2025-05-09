@@ -314,7 +314,7 @@ async fn register_plugin(
                     };
                     match json_root.get("algorithms") {
                         Some(serde_json::Value::Array(algo_list)) => {
-                            for algo in algo_list.into_iter() {
+                            for algo in algo_list.iter() {
                                 match algo {
                                     serde_json::Value::Object(algo_obj) => {
                                         let algo_name: &String = match algo_obj.get("name") {
