@@ -2,7 +2,7 @@
 
 [back](./index.md)
 
-Currently ATREA consists of 3 seperate applications.  
+Currently ATREA consists of 3 separate applications.  
 The quick-start is a example usage without much explanation and expects you to know bash.
 
 ## setup
@@ -22,7 +22,7 @@ cd ../atrea-webui
 cargo build --release
 ```
 
-## atrea collector
+## ATREA collector
 
 Collects the raw data needed.
 Run this on your server 24/7 and restart from time to time (maybe every week).
@@ -36,7 +36,7 @@ cd ~/atrea/collected_data
   --max-raidsize 300
 ```
 
-## atrea converter
+## ATREA converter
 
 Convert the data for the webui.  
 Stop the webui while running this.  
@@ -55,9 +55,9 @@ nu atrea-converter/convert.nu \
   --liked-channel-file liked_channels.txt
 ```
 
-## atrea webui
+## ATREA webui
 
-A Webserver for displaying the converted data.
+A webserver for displaying the converted data.
 
 ```sh
 cd ~/atrea/atrea-webui

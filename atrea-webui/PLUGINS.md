@@ -34,7 +34,7 @@ plugin_name
   * the record-key is the setting name (which can be any string, but it is recommended to keep it `^[a-zA-Z0-9-_ ]+$`).
   * the record-value is the default setting-value.
     * values can only be strings. if you need something else parse it at read-time.
-  * `"@!my_setting!@"` will be replaced with the value of `my_setting` (example: `"default_value"`) within your `js` before beeing sent to the browser.
+  * `"@!my_setting!@"` will be replaced with the value of `my_setting` (example: `"default_value"`) within your `js` before being sent to the browser.
 * the optional `category` is a string.
   * common keys: `design`, `integration`, `algorithm`, `other`
 * the optional `algorithms` is a list of records:

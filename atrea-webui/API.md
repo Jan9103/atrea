@@ -4,7 +4,7 @@
 
 source-code: `src/api_raids.rs`
 
-Get a list of induvidual raids:
+Get a list of individual raids:
 * `/api/raids/from/<name>/to/<name>`
 * `/api/raids/from/<name>`
 * `/api/raids/to/<name>`

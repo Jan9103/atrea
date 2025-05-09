@@ -1,6 +1,6 @@
 # Slow Start
 
-This tutorial expects you to be using linux. If you are not install [gitbash](https://git-scm.com/downloads/win) and use that.
+This tutorial expects you to be using Linux. If you are not install [gitbash](https://git-scm.com/downloads/win) and use that.
 
 If you are not familiar with bash you might need some help from a fried who does.
 
@@ -37,7 +37,7 @@ So the target environment is:
   * [ftp](https://en.wikipedia.org/wiki/File_Transfer_Protocol)
   * [rsync](https://en.wikipedia.org/wiki/Rsync)
   * [sshfs](https://en.wikipedia.org/wiki/SSHFS)
-  * [nas](https://en.wikipedia.org/wiki/Network-attached_storage)
+  * [NAS](https://en.wikipedia.org/wiki/Network-attached_storage)
   * etc
 
 
@@ -48,10 +48,10 @@ So the target environment is:
 #### Build flags
 
 Choosing the backend:
-* `irc` (default): uses [twitch's irc-server](https://dev.twitch.tv/docs/chat/irc/)
+* `irc` (default): uses [twitch's IRC-server](https://dev.twitch.tv/docs/chat/irc/)
   * less resource usage
 * `eventsub` (WIP): uses [twitch's eventsub-api](https://dev.twitch.tv/docs/eventsub/)
-  * will probably have more complete data (proper shoutout dection, outgoing raids, etc)
+  * will probably have more complete data (proper shoutout detection, outgoing raids, etc)
   * will maybe result in more data-collection-types
   * does not yet work
 
@@ -94,7 +94,7 @@ git pull
 cargo build --release
 ```
 
-### Nixos (untested)
+### NixOS (untested)
 
 ```nix
 { lib, fetchFromGitHub, rustPlatform, openssl, pkg-config, nix-update-script}:
@@ -126,7 +126,7 @@ rustPlatform.buildRustPackage {
 
 It first connects to the twitch server and "joins" (collects data from) the channels listed in the channel-list-file.
 
-When someone raids into a joined channel atrea-collector will join the raider.  
+When someone raids into a joined channel ATREA-collector will join the raider.  
 This is configurable, expandable, etc - but that is part of the usage chapter.
 
 Long version: [how it works](./how_it_works.md)
@@ -137,7 +137,7 @@ Long version: [how it works](./how_it_works.md)
 you can run `<binary> --help` to get a quick overview.
 
 The collector is intended to run 24/7 and be restarted from time to time.  
-So i would recommend using something like a systemd-service.  
+So i would recommend using something like a Systemd-service.  
 But it is still important to understand the basics first to enable you to configure it.
 
 ### Usage
@@ -153,7 +153,7 @@ But it is still important to understand the basics first to enable you to config
   * If you target small streamers i would recommend to turn it on.
 * `--log-shoutouts` (`-s`): Enables the logging of shoutouts.
   * Sadly this is based on parsing `!so` and `!shoutout` from the streamer, thus:
-    * atrea will have to parse all chat messages (though it has suprising little cpu/.. impact)
+    * ATREA will have to parse all chat messages (though it has surprising little cpu/.. impact)
     * the collected data is faulty by design (no idea if they shout-out twitch, twitter, etc; false shoutouts; etc)
   * Not many algorithms use this (yet), but it isn't much disk-space per day.
 * `--follow-shoutouts`: When enabled it will follow shoutouts the same way as it follows raids.
@@ -164,19 +164,19 @@ But it is still important to understand the basics first to enable you to config
   * Why?
     * Trolls sometimes solo-raid.
     * You can find gold, but often small streamers are new.
-    * If you target big streamers you probably don't want to waste resources on "tiny" streamer, which raid with 5 people into a 5k viwer channel.
+    * If you target big streamers you probably don't want to waste resources on "tiny" streamer, which raid with 5 people into a 5k viewer channel.
 * `--max-raidsize <NUMBER>`: Maximum raid-size to follow.
   * Default: [usize::MAX](https://doc.rust-lang.org/std/primitive.usize.html#associatedconstant.MAX) (essentially infinite, since `atrea-collector` will crash if this is exceeded)
   * This is intended for searching "small" streamers.
     * Sometimes 100k streamers raid 50 streamers and it trickles up/down (10 -> 20 -> 100 -> 500 -> 10k).
     * Big streamers raid big streamers, so once one is joined all will be joined quite quickly.
-    * Especially with `-j` big streamers have a big impact on cpu-usage and disk. (10 viewers vs 100k viwers => 10_000x)
+    * Especially with `-j` big streamers have a big impact on cpu-usage and disk. (10 viewers vs 100k viewers => 10_000x)
       * It is still manageable, but why waste resources on useless data?
 * `--stdout-sent`: Log sent commands to stdout (mainly for debugging)
-* `--stdout-recieved`: Log recieved commands to stdout (mainly for debugging and extremely spammy)
+* `--stdout-recieved`: Log received commands to stdout (mainly for debugging and extremely verbose)
 
 **channel-list-file:**  
-A newline seperated list of channels, which should be starting point for the data-collection.  
+A newline separated list of channels, which should be starting point for the data-collection.  
 This should be channels you like.  
 From my experience a size of 20-100 is ideal, but this also depends on stream-frequency, etc.
 
@@ -194,16 +194,16 @@ dove_7
 ### Restarting
 
 Since we experience exponential growth it makes sense to restart the collector semi-frequently.  
-The growth speed is not constant since it can take some time to escape a friendgroup, etc, but you
+The growth speed is not constant since it can take some time to escape a friendship, etc, but you
 should calculate with it always speeding up its growth.
 
 And outside of the resource-usage point: The data tends to become less accurate over time:
 * A darksouls streamer might raid a valheim streamer, which might raid a minecraft streamer, which might raid a pokemon streamer, etc.
 * Same for attributes like "funny", "lgbtq-friendly", etc.
 
-But you also need data and level-2, level-3, etc data is still interresting.
-* You probably already know your streamers immediate friendgroup.
-* Streamers around one or two corners are often still very simiar.
+But you also need data and level-2, level-3, etc data is still interesting.
+* You probably already know your streamers immediate friend-group.
+* Streamers around one or two corners are often still very similar.
 
 The restart-frequency is up to you:
 * Smaller streamers stream (and thus raid/..) less frequently and are less demanding.
@@ -230,7 +230,7 @@ From there on it is recessive growth, but 1k raids will obviously have better re
 **When does it stagnate?**
 
 Depends on your use-case, streamers, and taste.  
-And there will always be random raids into a new friendgroup, etc.  
+And there will always be random raids into a new friend-group, etc.  
 But it tends to significantly slow down after a month for me (7days, 200 max-size, etc).
 
 If you add new streamers to the channel-list-file or decrease the restart-frequency it will
@@ -278,7 +278,7 @@ RuntimeMaxSec=7d
 WantedBy=multi-user.target
 ```
 
-#### Nixos
+#### NixOS
 
 ```nix
 {pkgs, ...}: let
@@ -329,15 +329,15 @@ in {
 
 ## Setting up `atrea-converter`
 
-You will be running `atrea-converter` once before running `atrea-webui` and it uses as much cpu as it can.  
+You will be running `atrea-converter` once before running `atrea-webui` and it uses as much CPU as it can.  
 So it makes sense to install and run it on your high-powered device.
 
 ### Native
 
-Atrea converter is a script and thus you will have to install the language it is written in: [nu](https://www.nushell.sh/book/installation.html)  
+ATREA converter is a script and thus you will have to install the language it is written in: [nu](https://www.nushell.sh/book/installation.html)  
 If you choose to compile `nu` yourself keep the `sqlite` feature enabled.
 
-If you use the same device as for `atrea-collector` you can use the same atrea download: `/where_ever/you/want/to/store/it/atrea/atrea-converter/convert.nu`.
+If you use the same device as for `atrea-collector` you can use the same ATREA download: `/where_ever/you/want/to/store/it/atrea/atrea-converter/convert.nu`.
 
 Otherwise:
 
@@ -373,7 +373,7 @@ If you don't mind the security risk you can also add them to your `~/.bashrc` or
 
 ### Transferring data between devices
 
-If you run the suggested environment and have the `atrea-collector` on a seperate device
+If you run the suggested environment and have the `atrea-collector` on a separate device
 you will have to somehow get the data over.
 If not just skip this.
 
@@ -423,9 +423,9 @@ This requires the collector-device to be running a [ftp](https://en.wikipedia.or
 and your converter-device to install some kind of ftp client.
 
 Example ftp-clients:
-* [filezilla](https://filezilla-project.org/) (ol reliable graphical)
+* [filezilla](https://filezilla-project.org/) (old reliable graphical)
 * graphical file-managers with any update after 1980 like [dolphin](https://apps.kde.org/dolphin/) or [pcmanfm](https://en.wikipedia.org/wiki/PCMan_File_Manager)
-* universal downloaders like [cURL](https://en.wikipedia.org/wiki/CURL) (usually preinstalled on linux), [wget](https://en.wikipedia.org/wiki/Wget) (usually preinstalled on linux), or [aria2](https://github.com/aria2/aria2)
+* universal download tools like [cURL](https://en.wikipedia.org/wiki/CURL) (usually preinstalled on Linux), [wget](https://en.wikipedia.org/wiki/Wget) (usually preinstalled on Linux), or [aria2](https://github.com/aria2/aria2)
 * dedicated ftp-clients like [NcFTP](https://en.wikipedia.org/wiki/NcFTP)
 * [etc](https://en.wikipedia.org/wiki/Comparison_of_FTP_client_software)
 
@@ -455,8 +455,8 @@ The script is located at `/where_ever/you/want/to/store/it/atrea/atrea-converter
 
 This uses the same format as the `atrea-collector` `channel-list-file`.
 
-You can use the same file, but you can also use diffrent ones.  
-Thus you can use the same collector for multiple people by just concatinating their `liked-channel-file`s.  
+You can use the same file, but you can also use different ones.  
+Thus you can use the same collector for multiple people by just concatenating their `liked-channel-file`s.  
 But it can also be used to improve results if you think a channel is a good starting point, but not a channel you like.
 
 It is recommended to only include channels from the `channel-list-file` in the `liked-channel-file`.
@@ -484,7 +484,7 @@ Both `csv` and `sqlite` are universal formats, which can be used by many program
 
 ### Native
 
-This will recycle the atrea download used by `atrea-converter` since it is on the same device.
+This will recycle the ATREA download used by `atrea-converter` since it is on the same device.
 
 Build dependencies:
 * `cargo` (<https://rustup.sh>)
@@ -508,7 +508,7 @@ cargo build --release
 
 ## Running `atrea-webui`
 
-`atrea-webui` is buit uppon [rocket-rs](https://rocket.rs/) and thus missing a proper interface, etc.
+`atrea-webui` is built upon [rocket-rs](https://rocket.rs/) and thus missing a proper interface, etc.
 
 ### Usage
 
@@ -530,7 +530,7 @@ cargo build --release
 
 You can access it with your browser at the port and address you specified.  
 If you use the defaults and are on the same device you can simply use `http://127.0.0.1:8000`.  
-If it is on another device run `ip addr` on the webui-device to get its ip and then use `http://<ip address>:<port>`
+If it is on another device run `ip addr` on the webui-device to get its IP and then use `http://<ip address>:<port>`
 
 Just open the navigation and click through things.
 
@@ -543,11 +543,11 @@ Just open the navigation and click through things.
   * integrations with external services, such as [ganymede](https://github.com/Zibbp/ganymede).
   * links to external services.
 * `box` / `window` / `winbox`: The floating boxes in the webui.
-* `channel`: A twitch account in the context of beeing a streamer.
-* `viewer`: A twitch account in the context of beeing a viewer.
+* `channel`: A twitch account in the context of being a streamer.
+* `viewer`: A twitch account in the context of being a viewer.
 * `force-graph`: A interactive [Force-directed graph drawing](https://en.wikipedia.org/wiki/Force-directed_graph_drawing).
 * `sql` / `sqlite`: The database solution used ([sqlite](https://en.wikipedia.org/wiki/SQLite)) and the language used to interact with it ([sql](https://en.wikipedia.org/wiki/SQL)).
 
 ### API (aka use from other software)
 
-This is not yet properly documented, but atrea-webui offers a json-API, which could be used by 3rd party services or UIs.
+This is not yet properly documented, but ATREA-webui offers a json-API, which could be used by 3rd party services or User Interfaces.

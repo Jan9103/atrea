@@ -88,7 +88,7 @@ pub async fn force_graph_neighbours(
     mut db: rocket_db_pools::Connection<AtreaDb>,
     channel: &str,
 ) -> Result<RawJson<String>, Status> {
-    let mut nodes: Vec<SqliteRow> =
+    let nodes: Vec<SqliteRow> =
         match sqlx::query(include_str!("sql/graph/force_graph_neighbour_nodes.sql"))
             .bind(channel)
             .bind(channel)

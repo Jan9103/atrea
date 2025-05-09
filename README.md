@@ -1,8 +1,8 @@
 # ATREA
 
-A unofficial 3rd party alternate [twitch](https://twitch.tv) recommendation algorythm for nerds.
+A unofficial 3rd party alternate [twitch](https://twitch.tv) recommendation algorithm for nerds.
 
-Why for nerds? because its "hard" to run and works best with some sort of homelab.  
+Why for nerds? because its "hard" to run and works best with some sort of home-lab.  
 It is also not viable to host it for the masses thanks to [rate limits](https://dev.twitch.tv/docs/chat/#rate-limits).
 
 ![screenshot](https://jan9103.github.io/atrea/media/00.avif)
