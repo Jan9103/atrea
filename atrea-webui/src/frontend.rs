@@ -1,5 +1,7 @@
+use std::borrow::Cow;
+
 use rocket::{
-    http::{ContentType, Status},
+    http::{ContentType, Header, Status},
     response::content,
 };
 use rocket_db_pools::sqlx::{self, Row};
@@ -7,6 +9,26 @@ use rocket_db_pools::sqlx::{self, Row};
 use crate::AtreaSettingsDb;
 
 const EXTRA_HEAD_MARKER: &str = "<!--HEAD-->";
+
+#[derive(rocket::Responder)]
+pub struct AFeR<T> {
+    inner: T,
+    content_type: ContentType,
+    cache_control: Header<'static>,
+}
+impl<T> AFeR<T> {
+    const DEFAULT_CACHE_CONTROL: &'static str = "max-age=3600"; // 1hour
+    pub fn new(body: T, content_type: ContentType) -> Self {
+        Self {
+            inner: body,
+            content_type,
+            cache_control: Header {
+                name: rocket::http::uncased::Uncased::new("Cache-Control"),
+                value: Cow::from(Self::DEFAULT_CACHE_CONTROL),
+            },
+        }
+    }
+}
 
 #[get("/")]
 pub async fn get_slash() -> rocket::response::Redirect {
@@ -117,40 +139,55 @@ pub async fn get_html_index(
 // ######
 
 #[get("/atrea.js")]
-pub async fn get_js_atrea() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/atrea.js"))
+pub async fn get_js_atrea() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/atrea.js"), ContentType::JavaScript)
 }
 
 #[get("/box_channel.js")]
-pub async fn get_js_box_channel() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/box_channel.js"))
+pub async fn get_js_box_channel() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/box_channel.js"),
+        ContentType::JavaScript,
+    )
 }
 #[get("/box_nav.js")]
-pub async fn get_js_box_nav() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/box_nav.js"))
+pub async fn get_js_box_nav() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/box_nav.js"), ContentType::JavaScript)
 }
 #[get("/box_recs.js")]
-pub async fn get_js_box_recs() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/box_recs.js"))
+pub async fn get_js_box_recs() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/box_recs.js"), ContentType::JavaScript)
 }
 #[get("/index_mailbox.js")]
-pub async fn get_js_index_mailbox() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/index_mailbox.js"))
+pub async fn get_js_index_mailbox() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/index_mailbox.js"),
+        ContentType::JavaScript,
+    )
 }
 
 // libs
 
 #[get("/libs/force-graph.min.js")]
-pub async fn get_js_lib_force_graph() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/libs/force-graph.min.js"))
+pub async fn get_js_lib_force_graph() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/libs/force-graph.min.js"),
+        ContentType::JavaScript,
+    )
 }
 #[get("/libs/winbox.min.js")]
-pub async fn get_js_lib_winbox() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/libs/winbox.min.js"))
+pub async fn get_js_lib_winbox() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/libs/winbox.min.js"),
+        ContentType::JavaScript,
+    )
 }
 #[get("/libs/xeact.js")]
-pub async fn get_js_lib_xeact() -> content::RawJavaScript<&'static [u8]> {
-    content::RawJavaScript(include_bytes!("html/libs/xeact.js"))
+pub async fn get_js_lib_xeact() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/libs/xeact.js"),
+        ContentType::JavaScript,
+    )
 }
 
 // #######
@@ -158,16 +195,16 @@ pub async fn get_js_lib_xeact() -> content::RawJavaScript<&'static [u8]> {
 // #######
 
 #[get("/biglist.css")]
-pub async fn get_css_biglist() -> content::RawCss<&'static [u8]> {
-    content::RawCss(include_bytes!("html/biglist.css"))
+pub async fn get_css_biglist() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/biglist.css"), ContentType::CSS)
 }
 #[get("/box_style.css")]
-pub async fn get_css_box_style() -> content::RawCss<&'static [u8]> {
-    content::RawCss(include_bytes!("html/box_style.css"))
+pub async fn get_css_box_style() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/box_style.css"), ContentType::CSS)
 }
 #[get("/style.css")]
-pub async fn get_css_style() -> content::RawCss<&'static [u8]> {
-    content::RawCss(include_bytes!("html/style.css"))
+pub async fn get_css_style() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/style.css"), ContentType::CSS)
 }
 
 // #######
@@ -175,16 +212,19 @@ pub async fn get_css_style() -> content::RawCss<&'static [u8]> {
 // #######
 
 #[get("/loading_image.svg")]
-pub async fn get_svg_loading() -> RawSvg<&'static [u8]> {
-    RawSvg(include_bytes!("html/loading_image.svg"))
+pub async fn get_svg_loading() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/loading_image.svg"), ContentType::SVG)
 }
 #[get("/logo.svg")]
-pub async fn get_svg_logo() -> RawSvg<&'static [u8]> {
-    RawSvg(include_bytes!("html/logo.svg"))
+pub async fn get_svg_logo() -> AFeR<&'static [u8]> {
+    AFeR::new(include_bytes!("html/logo.svg"), ContentType::SVG)
 }
 #[get("/twitch_glitch_logo.svg")]
-pub async fn get_svg_twitch_glitch() -> RawSvg<&'static [u8]> {
-    RawSvg(include_bytes!("html/twitch_glitch_logo.svg"))
+pub async fn get_svg_twitch_glitch() -> AFeR<&'static [u8]> {
+    AFeR::new(
+        include_bytes!("html/twitch_glitch_logo.svg"),
+        ContentType::SVG,
+    )
 }
 
 // ###########
@@ -257,13 +297,4 @@ async fn get_extra_head(
     };
 
     Ok(result)
-}
-
-pub struct RawSvg<R>(pub R);
-impl<'r, 'o: 'r, R: rocket::response::Responder<'r, 'o>> rocket::response::Responder<'r, 'o>
-    for RawSvg<R>
-{
-    fn respond_to(self, request: &'r rocket::Request<'_>) -> rocket::response::Result<'o> {
-        (ContentType::SVG, self.0).respond_to(request)
-    }
 }
