@@ -23,6 +23,10 @@ fn rocket() -> _ {
             "atrea_settings_db init",
             init_settings_db,
         ))
+        .register(
+            "/",
+            catchers![not_found, internal_server_error, content_too_large,],
+        )
         .mount(
             BASEPATH,
             routes![
@@ -98,4 +102,20 @@ async fn init_settings_db(rocket: Rocket<Build>) -> fairing::Result {
         }
         None => Err(rocket),
     }
+}
+
+#[catch(404)]
+fn not_found() -> &'static str {
+    "Congrats, you walked to the left and found... Nothing! No secrets here Derek."
+}
+#[catch(500)]
+fn internal_server_error() -> &'static str {
+    "Server encountered a feature that (apparently) should be encountered... \
+        Ok, i don't think you will buy this... \
+        something broke. Check the server logs for more details."
+}
+#[catch(413)]
+fn content_too_large() -> &'static str {
+    "Sorry, but the server is not set-up to handle the entire bee-movie script. \
+        That request was to long."
 }
