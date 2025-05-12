@@ -130,10 +130,12 @@ pub async fn get_general(
     {
         return for_query(alg.sql, db, offset, limit).await;
     }
-    match sqlx::query("SELECT algorithm_name, plugin_name FROM plugin_algorithms WHERE name == ?;")
-        .bind(algorithm)
-        .fetch_all(&mut **settings_db)
-        .await
+    match sqlx::query(
+        "SELECT algorithm_name, plugin_name FROM plugin_algorithms WHERE algorithm_name == ?;",
+    )
+    .bind(algorithm)
+    .fetch_all(&mut **settings_db)
+    .await
     {
         Ok(res) => match res.into_iter().next() {
             Some(col) => {
