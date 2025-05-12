@@ -121,6 +121,8 @@ const render_neighbour_graph=()=>{
           .backgroundColor("#425")
           .nodeCanvasObject(({ img, x, y }, ctx) => {
             const size = 15;
+            // cant catch error here since it otherwise creates infinite errors
+            // and cant catch it outside the closure since it dosn't get caught then..
             ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
           })
           .nodePointerAreaPaint((node, color, ctx) => {

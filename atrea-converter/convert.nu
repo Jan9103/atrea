@@ -75,6 +75,7 @@ def main [
   calculate_shoutout_connections
   preprocess_joins
   get_channel_data
+  clean_deleted_channels
 
   stor export -f $output_sqlite | null
 }
@@ -174,6 +175,9 @@ def get_channel_data []: nothing -> nothing {
     "profile_image_url": str
     "created_at": datetime
   }
+  stor create -t deleted_channels --columns {
+    "login": str
+  }
 
   log info "  Logging into twitch.."
   let access_token: string = (
@@ -197,25 +201,45 @@ def get_channel_data []: nothing -> nothing {
     | append ((stor open).liked_channels.name)
     | append ((stor open).shoutout_connections.target)
     | uniq
-    | url encode -a
-    | each {|i| $'login=($i)'}
     | chunks 100  # limit of channels you can check per request
   ) {
     if ($chunk | is-empty) { continue }
     let res = (
-      http get -H $headers $'https://api.twitch.tv/helix/users?($chunk | str join "&")'
+      http get -H $headers $'https://api.twitch.tv/helix/users?($chunk | each {|i| $'login=($i | url encode -a)' } | str join "&")'
       | get data
       | update created_at {|i| $i.created_at | into datetime -f %+ }
       | update id {|i| $i.id | into int}
       | select id login display_name broadcaster_type description profile_image_url created_at
     )
     $res | stor insert -t channel_info
+
+    # yes twitch is a bit odd with informing about a channel beeing deleted.
+    # it will just not include it in the fetch result. no error, no nothing.
+    let successfully_fetched = $res.login
+    $chunk
+    | where $it not-in $successfully_fetched
+    | each {|i| {"login": $i}}
+    | stor insert -t deleted_channels
   }
 
   log info '  Cleaning up twitch access token..'
   "" | http post -H $headers $'https://id.twitch.tv/oauth2/revoke?client_id=($env.TWITCH_CLIENT_ID)&token=($access_token)'
 
   null
+}
+
+def clean_deleted_channels []: nothing -> nothing {
+  log info 'Cleaning up deleted twitch channels..'
+  for deleted_channel in (stor open).deleted_channels.login {
+    log info $'  Cleaning up ($deleted_channel)..'
+    stor delete -t liked_channels -w $'name == "($deleted_channel)"'
+    stor delete -t joins -w $'target == "($deleted_channel)"'
+    stor delete -t join_counts -w $'target == "($deleted_channel)"'
+    stor delete -t raids -w $'target == "($deleted_channel)" OR raider == "($deleted_channel)"'
+    stor delete -t raid_connections -w $'target == "($deleted_channel)" OR raider == "($deleted_channel)"'
+    stor delete -t shoutouts -w $'target == "($deleted_channel)" OR author == "($deleted_channel)"'
+    stor delete -t shoutout_connections -w $'target == "($deleted_channel)" OR author == "($deleted_channel)"'
+  }
 }
 
 def preprocess_joins [] {
