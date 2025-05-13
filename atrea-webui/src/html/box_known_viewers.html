@@ -6,7 +6,15 @@
     <link rel="stylesheet" href="box_style.css">
     <script defer type="module">
       import {g} from "./libs/xeact.js";
-      import{cr,ce,n}from"./atrea.js";
+      import{cr,ce,n,send_msg}from"./atrea.js";
+      const show_viewer=(click_event)=>{
+        let login=click_event.target.getAttribute("data-login");
+        send_msg("view_viewer",{
+          "name": login,
+          "login": login,
+        });
+      };
+
       fetch("api/viewers/known_viewers")
         .then(cr)
         .then(response=>response.json())
@@ -14,7 +22,13 @@
           let table=g("cvi_known_viewers");
           viewers.forEach((vo)=>{
             var tr=n("tr");
-            var td=n("td");td.innerText=vo["viewer"];tr.appendChild(td);
+            var td=n("td");
+            var btn=n("button");
+            btn.onclick=show_viewer;
+            btn.innerText=vo["viewer"];
+            btn.setAttribute("data-login",vo["viewer"]);
+            td.appendChild(btn);
+            tr.appendChild(td);
             td=n("td");td.innerText=vo["score"];tr.appendChild(td);
             table.appendChild(tr);
           });

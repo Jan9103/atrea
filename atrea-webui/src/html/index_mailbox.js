@@ -8,6 +8,12 @@ window.onmessage=(event)=>{
         background: "#660",
       });
       break;
+    case "view_viewer":
+      new WinBox("Viewer: "+msg["name"], {
+        url: "./box_viewer.html?login="+encodeURIComponent(msg["login"]),
+        background: "#390",
+      });
+      break;
     case "show_recs":
       new WinBox("Recommendations ("+msg["alg"]+")", {
         url: "./box_recs.html?algo="+encodeURIComponent(msg["alg"]),

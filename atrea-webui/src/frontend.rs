@@ -48,6 +48,15 @@ pub async fn get_html_box_channel(
         include_str!("html/box_channel.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
     Ok(content::RawHtml(html))
 }
+#[get("/box_viewer.html")]
+pub async fn get_html_box_viewer(
+    db: rocket_db_pools::Connection<AtreaSettingsDb>,
+) -> Result<content::RawHtml<String>, Status> {
+    let extra_head: String = get_extra_head(db, "box_viewer").await?;
+    let html: String =
+        include_str!("html/box_viewer.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
+    Ok(content::RawHtml(html))
+}
 #[get("/box_help_credits.html")]
 pub async fn get_html_box_help_credits(
     db: rocket_db_pools::Connection<AtreaSettingsDb>,

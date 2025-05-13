@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script type="module" defer>
+      import{cr,ce,n,send_msg}from"./atrea.js";
+      import{g}from"./libs/xeact.js";
+
+      const show_channel=(click_event)=>{
+        let login=click_event.target.getAttribute("data-login");
+        send_msg("view_channel",{
+          "name": login,
+          "login": login,
+        });
+      };
+
+      var params=new URLSearchParams(window.location.search);
+      var login=params.get("login");
+
+      fetch("api/viewer/"+login+"/channels")
+        .then(cr)
+        .then(r=>r.json())
+        .then(data=>{
+          let tbody=g("joincount_tbody");
+          for(const chd of data){
+            let tr=n("tr");
+            var td=n("td");
+            var btn=n("button");
+            btn.onclick=show_channel;
+            btn.setAttribute("data-login",chd["channel"]);
+            btn.innerText=chd["channel"];
+            td.appendChild(btn);
+            tr.appendChild(td);
+            td=n("td");td.innerText=chd["join_count"];tr.appendChild(td);
+            tbody.appendChild(tr);
+          }
+        })
+        .catch(ce);
+
+      g("h1_name").innerText=login;
+      fetch("api/channel/"+login+"/twitch_info")
+        .then(resp=>{
+          if(resp.status==404){
+            // not a channel (probably)
+            return null;
+          }else if(resp.status==200){
+            return resp.json();
+          }else{
+            throw new Error("Not 2xx response from "+resp.url, {"cause": resp});
+          }
+        })
+        .then(data=>{
+          if(data!=null){
+            g("h1_name").innerText=data["display_name"];
+            let b=g("view_channel_btn");
+            b.classList.remove("gone");
+            b.setAttribute("data-login",login);
+            b.onclick=show_channel;
+          }
+        })
+        .catch(ce);
+    </script>
+  </head>
+  <body>
+    <h1><span id="h1_name">loading..</span></h1>
+    <button class="gone" id="view_channel_btn">View as Channel</button>
+    <h2>Active in channels</h2>
+    <table>
+      <tr>
+        <th>Channel</th>
+        <th>Join-count</th>
+      </tr>
+      <tbody id="joincount_tbody"></tbody>
+    </table>
+  </body>
+</html>

@@ -9,6 +9,14 @@ const open_channel=(click_event)=>{
   });
 };
 
+const open_viewer=(click_event)=>{
+  let channel=click_event.target.innerText.toLowerCase().trim();
+  send_msg("view_viewer",{
+    "name": channel,
+    "login": channel
+  });
+};
+
 const fill_raid_table=(table,data,ir)=>{
   data.forEach((co)=>{
     var tr=n("tr");
@@ -89,7 +97,12 @@ fetch("api/channel/"+channel+"/known_viewers")
     let table=g("cvi_known_viewers");
     viewers.forEach((vo)=>{
       var tr=n("tr");
-      var td=n("td");td.innerText=vo["viewer"];tr.appendChild(td);
+      var td=n("td");
+      var btn=n("button");
+      btn.innerText=vo["viewer"];
+      btn.onclick=open_viewer;
+      td.appendChild(btn);
+      tr.appendChild(td);
       td=n("td");td.innerText=vo["score"];tr.appendChild(td);
       table.appendChild(tr);
     });
