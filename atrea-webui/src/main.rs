@@ -8,8 +8,8 @@ use rocket::{
 use rocket_db_pools::{sqlx, Database};
 
 use atrea_webui::{
-    ai_training_data::ai_training_data, api_channel, api_plugins, api_raids, api_recs,
-    api_shoutouts, api_viewers, frontend, AtreaDb, AtreaSettingsDb,
+    api_channel, api_plugins, api_raids, api_recs, api_shoutouts, api_viewers, frontend, AtreaDb,
+    AtreaSettingsDb,
 };
 
 const BASEPATH: &str = "/";
@@ -24,7 +24,7 @@ fn rocket() -> _ {
             init_settings_db,
         ))
         .register(
-            "/",
+            BASEPATH,
             catchers![not_found, internal_server_error, content_too_large,],
         )
         .mount(
@@ -85,7 +85,6 @@ fn rocket() -> _ {
                 frontend::get_svg_loading,
                 frontend::get_svg_logo,
                 frontend::get_svg_twitch_glitch,
-                ai_training_data, // a gift for all the ai-companies out there
             ],
         )
 }

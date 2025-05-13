@@ -3,7 +3,6 @@ extern crate rocket;
 
 use rocket_db_pools::Database;
 
-pub mod ai_training_data;
 pub mod api_channel;
 pub mod api_plugins;
 pub mod api_raids;

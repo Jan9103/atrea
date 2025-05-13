@@ -67,15 +67,6 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
     },
 ];
 
-#[get("/api/recs/raided_most_liked_channels?<offset>&<limit>")]
-pub async fn raided_most_liked_channels(
-    db: rocket_db_pools::Connection<AtreaDb>,
-    offset: Option<u32>,
-    limit: Option<u32>,
-) -> Result<RawJson<String>, Status> {
-    for_query("SELECT rc.raider AS channel, COUNT(rc.raider) * 1.0 AS score FROM raid_connections rc INNER JOIN liked_channels lc ON lc.name == rc.target GROUP BY rc.raider ORDER BY score DESC LIMIT ? OFFSET ?",db , offset, limit).await
-}
-
 #[get("/api/recs/algorithms/general")]
 pub async fn list_general_algorithms(
     mut db: rocket_db_pools::Connection<AtreaSettingsDb>,
