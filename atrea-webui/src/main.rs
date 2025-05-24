@@ -8,14 +8,15 @@ use rocket::{
 use rocket_db_pools::{sqlx, Database};
 
 use atrea_webui::{
-    api_channel, api_plugins, api_raids, api_recs, api_shoutouts, api_viewers, frontend, AtreaDb,
-    AtreaSettingsDb,
+    api_channel, api_graph, api_plugins, api_raids, api_recs, api_shoutouts, api_viewers, frontend,
+    AtreaDb, AtreaSettingsDb,
 };
 
 const BASEPATH: &str = "/";
 
 #[launch]
 fn rocket() -> _ {
+    #[allow(deprecated)] // some route functions are marked as deprecated and sheduled to be removed
     rocket::build()
         .attach(AtreaDb::init())
         .attach(AtreaSettingsDb::init())
@@ -50,6 +51,10 @@ fn rocket() -> _ {
                 api_raids::raidstats_to,
                 api_recs::get_general,
                 api_recs::get_liked_channels,
+                api_graph::get_all_nodes,
+                api_graph::get_all_links,
+                api_graph::get_neightbour_nodes,
+                api_graph::get_neightbour_links,
                 api_recs::list_general_algorithms,
                 api_shoutouts::shoutouts_from,
                 api_shoutouts::shoutouts_from_to,
@@ -85,6 +90,8 @@ fn rocket() -> _ {
                 frontend::get_svg_loading,
                 frontend::get_svg_logo,
                 frontend::get_svg_twitch_glitch,
+                frontend::get_html_box_graph_v2,
+                frontend::get_html_box_graph_v2_control,
             ],
         )
 }

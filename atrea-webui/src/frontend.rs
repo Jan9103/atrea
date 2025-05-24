@@ -120,6 +120,7 @@ pub async fn get_html_box_recs(
         include_str!("html/box_recs.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
     Ok(content::RawHtml(html))
 }
+#[deprecated]
 #[get("/box_rel_graph.html")]
 pub async fn get_html_box_rel_graph(
     db: rocket_db_pools::Connection<AtreaSettingsDb>,
@@ -127,6 +128,24 @@ pub async fn get_html_box_rel_graph(
     let extra_head: String = get_extra_head(db, "box_rel_graph").await?;
     let html: String =
         include_str!("html/box_rel_graph.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
+    Ok(content::RawHtml(html))
+}
+#[get("/box_graph_v2.html")]
+pub async fn get_html_box_graph_v2(
+    db: rocket_db_pools::Connection<AtreaSettingsDb>,
+) -> Result<content::RawHtml<String>, Status> {
+    let extra_head: String = get_extra_head(db, "box_graph_v2").await?;
+    let html: String =
+        include_str!("html/box_graph_v2.html").replace(EXTRA_HEAD_MARKER, extra_head.as_str());
+    Ok(content::RawHtml(html))
+}
+#[get("/box_graph_v2_control.html")]
+pub async fn get_html_box_graph_v2_control(
+    db: rocket_db_pools::Connection<AtreaSettingsDb>,
+) -> Result<content::RawHtml<String>, Status> {
+    let extra_head: String = get_extra_head(db, "box_graph_v2_control").await?;
+    let html: String = include_str!("html/box_graph_v2_control.html")
+        .replace(EXTRA_HEAD_MARKER, extra_head.as_str());
     Ok(content::RawHtml(html))
 }
 #[get("/index.html")]

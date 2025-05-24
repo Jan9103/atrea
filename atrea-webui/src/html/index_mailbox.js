@@ -45,6 +45,7 @@ window.onmessage=(event)=>{
         background: "#066",
       });
       break;
+    // DEPRECATED
     case "show_rel_graph":
       new WinBox("Force Graph", {
         url: "./box_rel_graph.html",
@@ -65,6 +66,20 @@ window.onmessage=(event)=>{
         background: "#a00",
         x: "center",
         y: "center",
+      });
+      break;
+    case "open_graph_v2":
+      new WinBox("Force Graph", {
+        url: "./box_graph_v2.html?"+msg["params"],
+        background: "#006",
+        width: "100%",
+        height: "100%",
+      });
+      break;
+    case "open_graph_v2_control":
+      new WinBox("Force Graph", {
+        url: msg["channel"]===undefined?"./box_graph_v2_control.html":"./box_graph_v2_control.html?channel="+encodeURIComponent(msg["channel"]),
+        background: "#006",
       });
       break;
     default:

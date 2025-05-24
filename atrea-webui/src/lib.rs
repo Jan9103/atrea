@@ -4,6 +4,7 @@ extern crate rocket;
 use rocket_db_pools::Database;
 
 pub mod api_channel;
+pub mod api_graph;
 pub mod api_plugins;
 pub mod api_raids;
 pub mod api_recs;

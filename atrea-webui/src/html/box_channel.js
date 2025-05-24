@@ -158,3 +158,4 @@ const render_neighbour_graph=()=>{
 }
 
 g("cvi_raid_neighbour_graph_btn").onclick=render_neighbour_graph;
+g("full_screen_neighbours").onclick=()=>{send_msg("open_graph_v2_control",{"channel":channel});};

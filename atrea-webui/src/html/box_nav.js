@@ -39,5 +39,5 @@ g("nav_credits").onclick=()=>{
 
 g("nav_known_viewers").onclick=()=>{send_msg("open_known_viewers");};
 g("nav_liked_channels").onclick=()=>{send_msg("open_liked_channels");};
-g("nav_rel_graph").onclick=()=>{send_msg("show_rel_graph");};
+g("nav_rel_graph").onclick=()=>{send_msg("open_graph_v2_control");};
 g("nav_plugins").onclick=()=>{send_msg("show_plugins");};

@@ -27,7 +27,7 @@ hr {
   border-top: var(--border);
 }
 
-button {
+button,input[type="submit"] {
   background-color: inherit;
   border: none;
   color: var(--link);

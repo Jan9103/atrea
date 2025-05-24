@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="./style.css">
+    <link rel="stylesheet" href="./box_style.css">
+    <style>
+      #query_type_user:not(:checked)~.user_mode_only{display:none;}
+    </style>
+    <script type="module">
+      import {g,r} from "./libs/xeact.js";
+      import{send_msg,cr,ce}from"./atrea.js";
+      var params = new URLSearchParams(window.location.search);
+      var channel = params.get("channel");
+
+      r(()=>{ // for some reason "defer" is not enough to ensure the document is loaded..
+        if(channel==null){
+          fetch("api/recs/general/liked_channels?limit=100").then(cr).then(resp=>resp.json()).then((liked_channels)=>{
+            g("center_login").value=liked_channels[Math.floor(Math.random()*liked_channels.length)]["channel"]||"bobross";
+          }).catch(ce);
+        }else{
+          g("center_login").value=channel;
+          g("query_type_user").checked = true;
+        }
+        let form=g("form");
+        form.onsubmit=(event)=>{ // for some reason it does not work if defined a attribute in html..
+          event.preventDefault();
+          console.log(event);
+          console.log(new FormData(event.target));
+          send_msg("open_graph_v2", {
+            // "params": event.target.action.split("?",2)[1],  // not "X-Content-Type-Options: nosniff" compatible
+            "params": [...(new FormData(form)).entries().map(([k,v])=>encodeURIComponent(k)+"="+encodeURIComponent(v))].join("&"),
+          });
+          return false;
+        };
+      });
+    </script>
+    <!--HEAD-->
+  </head>
+  <body>
+    <form id="form" method="GET">
+      <span>Query Type:</span><br>
+      <input type="radio" id="query_type_all" name="query_type" value="all" checked>
+      <label for="query_type_all">All</label><br>
+      <input type="radio" id="query_type_user" name="query_type" value="user">
+      <label for="query_type_user">User Focused</label><br><br>
+
+      <label for="center_login" class="user_mode_only">Focused User (login)</label>
+      <input type="text" id="center_login" name="center_login" class="user_mode_only"><br class="user_mode_only">
+      <label for="depth" class="user_mode_only">Query depth</label>
+      <input type="text" id="depth" name="depth" value="3" class="user_mode_only"><br class="user_mode_only"><br class="user_mode_only">
+
+      <input type="checkbox" id="profile_pictures" name="profile_pictures" value="1">
+      <label for="profile_pictures">Render profile pictures (can cause lag with many nodes)</label><br>
+
+      <br><input type="submit" value="Render">
+    </form>
+  </body>
+</html>

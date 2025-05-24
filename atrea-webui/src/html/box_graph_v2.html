@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html style="overflow:hidden">
+  <head>
+    <meta charset="UTF-8"> 
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="box_style.css">
+    <script src="./libs/force-graph.min.js"></script>
+    <script defer type="module">
+      import{ce,cr}from"./atrea.js";(()=>{
+      let params=new URLSearchParams(window.location.search);
+      let query_type=params.get("query_type");
+      let node_url="";
+      let link_url="";
+      if(query_type=="user"){
+        let depth=params.get("depth");
+        let center_login=params.get("center_login");
+        node_url="api/graph/neighbour/nodes/"+center_login+"/"+depth;
+        link_url="api/graph/neighbour/links/"+center_login+"/"+depth;
+      }else if(query_type=="all"){
+        node_url="api/graph/all/nodes";
+        link_url="api/graph/all/links";
+      }else{
+        ce(new Error("Invalid query_type parameter for box_graph_v2.html: "+query_type));
+        return;
+      }
+      let profile_pictures=(params.get("profile_pictures")==1?true:false);
+
+      Promise.all([
+        (fetch(node_url).then(cr).then(resp=>resp.json())),
+        (fetch(link_url).then(cr).then(resp=>resp.json())),
+      ]).then(([nodes,links])=>{
+        let gData={"nodes": nodes, "links": links};
+        if(profile_pictures){
+          gData={
+            links:gData["links"],
+            nodes:gData["nodes"].map(n=>{
+              const img=new Image();
+              img.src="api/channel/"+n["id"]+"/image";
+              n["img"]=img;
+              return n;
+            }),
+          };
+        }
+        const graph=new ForceGraph()
+          (document.getElementById("graph"))
+            .graphData(gData)
+            .backgroundColor("#213")
+            .nodeColor("color")
+            .linkColor(()=>"#088")
+            .onNodeClick((node)=>{
+              console.log(node);
+              window.top.postMessage(JSON.stringify({
+                "action":"view_channel",
+                "name":node["name"],
+                "login":node["id"],
+              }));
+            });
+        if(profile_pictures){
+          graph
+            .nodeCanvasObject(({ img, x, y }, ctx) => {
+              const size = 15;
+              // cant catch error here since it otherwise creates infinite errors
+              // and cant catch it outside the closure since it dosn't get caught then..
+              ctx.drawImage(img, x - size / 2, y - size / 2, size, size);
+            })
+            .nodePointerAreaPaint((node, color, ctx) => {
+              const size = 15;
+              ctx.fillStyle = color;
+              ctx.fillRect(node.x - size / 2, node.y - size / 2, size, size);
+            });
+        }
+      })
+      .catch(ce);
+    })();</script>
+    <!--HEAD-->
+  </head>
+  <body>
+    <div id="graph"></div>
+  </body>
+</html>
