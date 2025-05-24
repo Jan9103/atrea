@@ -9,6 +9,6 @@ irc = []
 eventsub = ["dep:tungstenite"]
 
 [dependencies]
-openssl = "0.10.71"
-pico-args = "0.5.0"
-tungstenite = {version = "0.26.2", optional = true}
+openssl = "0.10"
+pico-args = "0.5"
+tungstenite = {version = "0.26", optional = true}
