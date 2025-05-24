@@ -534,6 +534,8 @@ If it is on another device run `ip addr` on the webui-device to get its IP and t
 
 Just open the navigation and click through things.
 
+It is recommended to check multiple algorithms since they have highly varying approaches and results.
+
 ### Concepts
 
 * `algorithm`: A algorithm is one way to process the data and generate a list of recommendations.

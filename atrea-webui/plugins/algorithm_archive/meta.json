@@ -21,6 +21,16 @@
       "name": "vixen1",
       "description": "Weighted shared viewer analysis. Finds loosely similar streamers.",
       "used_data": "joins"
+    },
+    {
+      "name": "bcal1v1",
+      "description": "Basic Corner Algorithm Level 1 Version 1. A slightly different weighting from brta2 and vastly different results. Struggels with small datasets and essentially a worse brta2 / bcal2v1.",
+      "used_data": "raids shoutouts"
+    },
+    {
+      "name": "bcal2v1_plus_vixen2",
+      "description": "Essentially bcal2v1 with extra sub-weighting. But since this is a badly sorted subset of checking both bcal2v1 and rava3 it has never been included in the main app. It is also strongly affected by dataset size.",
+      "used_data": "raids shoutouts"
     }
   ]
 }

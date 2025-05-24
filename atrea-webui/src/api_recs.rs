@@ -33,7 +33,7 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
     Algorithm {
         name: "brta2",
         sql: include_str!("sql/recs/brta2.sql"),
-        description: "Basic raid trace analysis v2 (improved handling of big datasets). Mainly finds friendgroups.",
+        description: "Basic raid trace analysis v2. Mainly finds friendgroups.",
         used_data: &["raids"],
         is_primary: true,
     },
@@ -64,6 +64,20 @@ const AVAILABLE_GENERAL_ALGORITHMS: &[Algorithm] = &[
         description: "Weighted shared viewer analysis. Finds similar channels around a few corners.",
         used_data: &["joins"],
         is_primary: false,
+    },
+    Algorithm {
+        name: "bcal2v1",
+        sql: include_str!("sql/recs/bcal2v1.sql"),
+        description: "Basic Corner Algorithm Level 2 Version 1. Checks around 1 corner and thus finds people sharing friends.",
+        used_data: &["raids", "shoutouts"],
+        is_primary: true,
+    },
+    Algorithm {
+        name: "bcal3v1",
+        sql: include_str!("sql/recs/bcal3v1.sql"),
+        description: "Basic Corner Algorithm Level 3 Version 1. Heavily favors extended friendgroups, which support each other (example: TheLastSeahorse).",
+        used_data: &["raids", "shoutouts"],
+        is_primary: true,
     },
 ];
 
