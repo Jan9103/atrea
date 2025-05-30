@@ -7,15 +7,27 @@ It is also not viable to host it for the masses thanks to [rate limits](https://
 
 ![screenshot](https://jan9103.github.io/atrea/media/00.avif)
 
-## Project status
-
-* Currently it is in alpha (the base-functionality exists in a buggy state).
-* Due to the problems with the concept and the early stage of the project i might abandon it.
-
 ## Getting started
 
 * [quick start](./docs/quick_start.md)
 * [slow start](./docs/slow_start.md)
+
+## Project status
+
+* Currently it is in alpha (all the base-functionality exists).
+* Since i have everything i personally need my focus has shifted (for now).
+
+### Planned things
+
+* Easier installation
+* UI improvements (more links, nicer looking, more "load more", loading symbols, etc)
+* Collect more data (subscribers, VIPs, MODs, etc)
+* More / Better Algorithms
+* Stabilisation of API
+* More caching, Incremental conversions, etc
+* Etc
+
+There is a bunch more ideas and details, but i don't want to nail that down.
 
 ## Legal
 
