@@ -3,19 +3,33 @@
 A unofficial 3rd party alternate [twitch](https://twitch.tv) recommendation algorithm for nerds.
 
 Why for nerds? because its "hard" to run and works best with some sort of home-lab.  
-It is also not viable to host it for the masses thanks to [rate limits](https://dev.twitch.tv/docs/chat/#rate-limits).
+It is also not viable to host it for the masses thanks to [rate limits](https://dev.twitch.tv/docs/chat/#rate-limits) (and thus not being designed for it).
 
 ![screenshot](https://jan9103.github.io/atrea/media/00.avif)
 
-## Getting started
+## Docs
 
+Getting started
 * [quick start](./docs/quick_start.md)
 * [slow start](./docs/slow_start.md)
+
+Contributing / Extending:
+* [plugin creation guide](./docs/creating_plugins.md)
 
 ## Project status
 
 * Currently it is in alpha (all the base-functionality exists).
 * Since i have everything i personally need my focus has shifted (for now).
+
+## Feature Highlights
+
+* Multiple recommendation algorithms
+* Channel view (raids, shoutouts, viewers you might know, etc)
+* Force graphs for connections
+* Plugin system + A few official plugins:
+  * More algorithms
+  * Integration with things like [ganymede](https://github.com/Zibbp/ganymede), [pronouns.alejo.io](https://pr.alejo.io/), [twitchtracker.com](https://twitchtracker.com), etc
+  * Design adjustments
 
 ### Planned things
 
