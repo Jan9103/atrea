@@ -194,10 +194,17 @@ fn handle_incomming_irc(
                 match *args.first().unwrap_or(&"") {
                     "!so" | "!shoutout" => {
                         if let Some(target) = args.get(1) {
+                            let target = if target.starts_with('@') {
+                                target.strip_prefix('@').unwrap()
+                            } else {
+                                target
+                            }
                             // the login is just the display name in lowercase in 99% of cases
-                            let target = target.to_lowercase();
+                            .to_lowercase();
                             // only allow valid usernames (some shoutout by twitter-url, name, (at)twitter_handle, etc)
-                            if target.chars().all(|c| c.is_ascii_alphanumeric()) && target.len() > 3
+                            if target.chars().all(|c| c.is_ascii_alphanumeric())
+                                && target.len() > 4
+                                && target != "raider"
                             {
                                 logs.log_shoutout(room, target.as_str())?;
                                 if settings.follow_shoutouts {
