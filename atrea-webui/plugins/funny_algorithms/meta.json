@@ -1,0 +1,11 @@
+{
+  "description": "Funny algorithms",
+  "category": "algorithm",
+  "algorithms": [
+    {
+      "name": "random",
+      "description": "A random raider (equal chance for all)",
+      "used_data": "raids"
+    }
+  ]
+}

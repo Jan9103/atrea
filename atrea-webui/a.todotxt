@@ -1,0 +1,6 @@
+(A) add new raid-parameters to builtin algorithms
+(A) test if API works with the new raid-parameter system
+(B) add UI for new raid-parameter system
+(C) add documentation for raid-parameter system
+(C) add new raid-parameters to plugin algorithms
+(C) save raid-parameter stuff to sqlite uppon plugin load
