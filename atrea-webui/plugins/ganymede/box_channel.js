@@ -66,7 +66,7 @@ r(()=>{
     .then(resp=>{
       if(resp.ok){
         return resp.json();
-      }else if(resp.status=404){
+      }else if(resp.status==404){
         return null;
       }else{
         throw new Error("Not 2xx response from "+resp.url, {"cause": resp});
