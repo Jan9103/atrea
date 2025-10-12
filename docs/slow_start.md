@@ -55,7 +55,38 @@ Choosing the backend:
   * will maybe result in more data-collection-types
   * does not yet work
 
+### Docker / Podman
+
+<details><summary>click to show</summary>
+
+Running:
+
+```bash
+podman run \
+  --rm \
+  --name 'atrea_webui' \
+  -p '8080:8000' \
+  -v '/srv/atrea/atrea_db.sqlite:/atrea_db.sqlite' \
+  -v '/srv/atrea/atrea_settings_db.sqlite:/atrea_settings_db.sqlite' \
+  ghcr.io/jan9103/atrea-webui:latest
+```
+
+replace:
+* `podman` with `docker` if you use docker
+* `8080` with whichever port you want it to run on
+* `/srv/atrea/atrea_db.sqlite` with the location where you want to store the database
+* `/srv/atrea/atrea_settings_db.sqlite` with the location where you want to store the settings database
+
+if you have additional plugins you can register them with:
+* `-v '/srv/atrea/plugins:/plugins'` (adjust the path)
+
+Updating: `podman pull ghcr.io/jan9103/atrea-webui:latest`
+
+</details>
+
 ### Native
+
+<details><summary>click to show</summary>
 
 Runtime system dependencies:
 * openssl
@@ -94,7 +125,11 @@ git pull
 cargo build --release
 ```
 
+</details>
+
 ### NixOS (untested)
+
+<details><summary>click to show</summary>
 
 ```nix
 { lib, fetchFromGitHub, rustPlatform, openssl, pkg-config, nix-update-script}:
@@ -120,6 +155,8 @@ rustPlatform.buildRustPackage {
   };
 }
 ```
+
+</details>
 
 
 ## How `atrea-collector` operates (abridged)

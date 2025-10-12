@@ -10,12 +10,32 @@ use std::{
 
 use crate::{json_escape_string, AtreaSettingsDb};
 
+const PLUGIN_DIRS: &[&str] = &[
+    #[cfg(not(feature = "docker"))]
+    "plugins",
+    #[cfg(feature = "docker")]
+    "/plugins",
+    #[cfg(feature = "docker")]
+    "/builtin_plugins",
+];
+
+fn find_path(plugin_name: &str) -> Result<PathBuf, Status> {
+    match PLUGIN_DIRS
+        .iter()
+        .map(|i| PathBuf::from(i).join(plugin_name))
+        .find(|p| p.is_dir())
+    {
+        Some(v) => Ok(v),
+        None => Err(Status::NotFound),
+    }
+}
+
 #[get("/get_css_plugin?<plugin_name>&<css_name>")]
 pub async fn get_css(plugin_name: &str, css_name: &str) -> Result<content::RawCss<String>, Status> {
     if !is_valid_filename(plugin_name) || !is_valid_filename(css_name) {
         return Err(Status::BadRequest);
     }
-    let file_path: PathBuf = PathBuf::from("plugins").join(plugin_name).join(css_name);
+    let file_path: PathBuf = find_path(plugin_name)?.join(css_name);
     if !file_path.is_file() {
         return Err(Status::NotFound);
     }
@@ -36,7 +56,7 @@ pub async fn get_js(
     if !is_valid_filename(plugin_name) || !is_valid_filename(js_name) {
         return Err(Status::BadRequest);
     }
-    let file_path: PathBuf = PathBuf::from("plugins").join(plugin_name).join(js_name);
+    let file_path: PathBuf = find_path(plugin_name)?.join(js_name);
     if !file_path.is_file() {
         return Err(Status::NotFound);
     }
@@ -213,23 +233,24 @@ pub async fn update_db(
         return Err(Status::InternalServerError);
     };
 
-    match fs::read_dir("plugins") {
-        Ok(lsr) => {
-            for lsi in lsr.into_iter() {
-                match lsi {
-                    Ok(dir_entry) => match dir_entry.file_type() {
-                        Ok(ft) => {
-                            if ft.is_dir() {
-                                register_plugin(&mut db, &dir_entry.path(), &enabled_plugins)
-                                    .await?;
-                                let plugin_name: String = dir_entry
-                                    .file_name()
-                                    .into_string()
-                                    .expect("Path not string compatible");
-                                for setting in
-                                    changed_settings.iter().filter(|si| si.0 == plugin_name)
-                                {
-                                    if let Err(err) = sqlx::query(
+    for plugin_dir in PLUGIN_DIRS.iter().filter(|i| PathBuf::from(i).is_dir()) {
+        match fs::read_dir(plugin_dir) {
+            Ok(lsr) => {
+                for lsi in lsr.into_iter() {
+                    match lsi {
+                        Ok(dir_entry) => match dir_entry.file_type() {
+                            Ok(ft) => {
+                                if ft.is_dir() {
+                                    register_plugin(&mut db, &dir_entry.path(), &enabled_plugins)
+                                        .await?;
+                                    let plugin_name: String = dir_entry
+                                        .file_name()
+                                        .into_string()
+                                        .expect("Path not string compatible");
+                                    for setting in
+                                        changed_settings.iter().filter(|si| si.0 == plugin_name)
+                                    {
+                                        if let Err(err) = sqlx::query(
                                         "UPDATE plugin_settings SET setting_value = ? WHERE plugin_name == ? AND setting_key == ?;",
                                     )
                                     .bind(&setting.2)
@@ -241,24 +262,25 @@ pub async fn update_db(
                                         eprintln!("{}", err);
                                         return Err(Status::InternalServerError);
                                     };
+                                    }
                                 }
                             }
-                        }
+                            Err(err) => {
+                                eprintln!("{}", err);
+                                return Err(Status::InternalServerError);
+                            }
+                        },
                         Err(err) => {
                             eprintln!("{}", err);
                             return Err(Status::InternalServerError);
                         }
-                    },
-                    Err(err) => {
-                        eprintln!("{}", err);
-                        return Err(Status::InternalServerError);
                     }
                 }
             }
-        }
-        Err(err) => {
-            eprintln!("{}", err);
-            return Err(Status::InternalServerError);
+            Err(err) => {
+                eprintln!("{}", err);
+                return Err(Status::InternalServerError);
+            }
         }
     }
 
