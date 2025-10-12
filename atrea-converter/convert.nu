@@ -44,6 +44,7 @@ def main [
   --collected-data-dir: path = "./collected_data"
   --output-sqlite: path = "./atrea_db.sqlite"
   --liked-channel-file: path = "./liked_channels.txt"
+  --skip-joins
 ]: nothing -> nothing {
   $env.NU_LOG_FORMAT = ($env.NU_LOG_FORMAT? | default "%ANSI_START%%DATE%|%LEVEL%|%MSG%%ANSI_STOP%")
   $env.NU_LOG_LEVEL = ($env.NU_LOG_LEVEL? | default "info")
@@ -68,31 +69,35 @@ def main [
   | each {|i| {"name": $i} }
   | stor insert -t liked_channels | null
 
-  csv_to_sqlite $collected_data_dir
+  csv_to_sqlite $collected_data_dir --skip-joins=$skip_joins
   calculate_raid_connections
   calculate_shoutout_connections
   preprocess_joins
   get_channel_data
   clean_deleted_channels
 
+  rm --force $output_sqlite
   stor export -f $output_sqlite | null
 }
 
 def csv_to_sqlite [
   collected_data_dir: path
+  --skip-joins
 ]: nothing -> nothing {
   cd $collected_data_dir
 
   log info "Converting joins to sqlite.."
   stor create -t joins --columns {"timestamp": datetime, "viewer": str, "target": str}
-  glob 'joins-*.csv*'
-  | par-each {|file|
-    log info $"  Converting ($file | path basename) to sqlite.."
-    smart_csv_cat $file
-    | rename timestamp viewer target
-    | where viewer not-in $KNOWN_GLOBAL_BOTS
-    | stor insert -t joins | null
-  } | null
+  if not $skip_joins {
+    glob 'joins-*.csv*'
+    | par-each {|file|
+      log info $"  Converting ($file | path basename) to sqlite.."
+      smart_csv_cat $file
+      | rename timestamp viewer target
+      | where viewer not-in $KNOWN_GLOBAL_BOTS
+      | stor insert -t joins | null
+    } | null
+  }
 
   log info "Converting raids to sqlite.."
   stor create -t raids --columns {"timestamp": datetime, "raider": str, "target": str, "size": int}
