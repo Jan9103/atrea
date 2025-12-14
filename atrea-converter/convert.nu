@@ -45,6 +45,8 @@ def main [
   --output-sqlite: path = "./atrea_db.sqlite"
   --liked-channel-file: path = "./liked_channels.txt"
   --skip-joins
+
+  --channel-fetch-cache-file: path  # eg. "channel_fetch_cache.sqlite3"
 ]: nothing -> nothing {
   $env.NU_LOG_FORMAT = ($env.NU_LOG_FORMAT? | default "%ANSI_START%%DATE%|%LEVEL%|%MSG%%ANSI_STOP%")
   $env.NU_LOG_LEVEL = ($env.NU_LOG_LEVEL? | default "info")
@@ -67,17 +69,17 @@ def main [
   stor create -t liked_channels --columns {"name": str}
   $liked_channels
   | each {|i| {"name": $i} }
-  | stor insert -t liked_channels | null
+  | stor insert -t liked_channels | ignore
 
   csv_to_sqlite $collected_data_dir --skip-joins=$skip_joins
   calculate_raid_connections
   calculate_shoutout_connections
   preprocess_joins
-  get_channel_data
+  get_channel_data --channel-fetch-cache-file=$channel_fetch_cache_file
   clean_deleted_channels
 
   rm --force $output_sqlite
-  stor export -f $output_sqlite | null
+  stor export -f $output_sqlite | ignore
 }
 
 def csv_to_sqlite [
@@ -167,7 +169,17 @@ def calculate_shoutout_connections []: nothing -> nothing {
   } | null
 }
 
-def get_channel_data []: nothing -> nothing {
+def get_channel_data [--channel-fetch-cache-file: path]: nothing -> nothing {
+  if $channel_fetch_cache_file != null and ($channel_fetch_cache_file | path exists) {
+    log info 'Cleanig channel-fetch cache file..'
+    open $channel_fetch_cache_file
+    | query db "DELETE FROM channel_info WHERE meta_fetch_date < datetime('now', '-3 days')"
+    log info 'Importing channel-fetch cache file..'
+    # stor import --file-name $channel_fetch_cache_file
+    # TODO: actually load
+    # maybe use old atrea file
+  }
+
   log info "Fetching channel details via twitch api.."
   stor create -t channel_info --columns {
     "id": int
@@ -177,6 +189,7 @@ def get_channel_data []: nothing -> nothing {
     "description": str
     "profile_image_url": str
     "created_at": datetime
+    "meta_fetch_date": datetime
   }
   stor create -t deleted_channels --columns {
     "login": str
