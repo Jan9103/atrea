@@ -67,7 +67,7 @@ def main [
   stor create -t liked_channels --columns {"name": str}
   $liked_channels
   | each {|i| {"name": $i} }
-  | stor insert -t liked_channels | null
+  | stor insert -t liked_channels | ignore
 
   csv_to_sqlite $collected_data_dir --skip-joins=$skip_joins
   calculate_raid_connections
@@ -77,7 +77,7 @@ def main [
   clean_deleted_channels
 
   rm --force $output_sqlite
-  stor export -f $output_sqlite | null
+  stor export -f $output_sqlite | ignore
 }
 
 def csv_to_sqlite [
@@ -95,8 +95,9 @@ def csv_to_sqlite [
       smart_csv_cat $file
       | rename timestamp viewer target
       | where viewer not-in $KNOWN_GLOBAL_BOTS
-      | stor insert -t joins | null
-    } | null
+      | stor insert -t joins
+      | ignore
+    } | ignore
   }
 
   log info "Converting raids to sqlite.."
@@ -105,8 +106,8 @@ def csv_to_sqlite [
   | par-each {|file|
     log info $"  Converting ($file | path basename) to sqlite.."
     smart_csv_cat $file
-    | stor insert -t raids | null
-  } | null
+    | stor insert -t raids | ignore
+  } | ignore
 
   log info "Converting shoutouts to sqlite.."
   stor create -t shoutouts --columns {"timestamp": datetime, "author": str, "target": str}
@@ -115,8 +116,9 @@ def csv_to_sqlite [
     log info $"  Converting ($file | path basename) to sqlite.."
     smart_csv_cat $file
     | where $it.target != ""
-    | stor insert -t shoutouts | null
-  } | null
+    | stor insert -t shoutouts
+    | ignore
+  } | ignore
 }
 
 def smart_csv_cat [
@@ -135,36 +137,39 @@ def smart_csv_cat [
 
 def calculate_raid_connections []: nothing -> nothing {
   log info "Generating raid-connection cache.."
-  stor create -t raid_connections --columns {"raider": str, "target": str, "total_viewers": int, "raid_count": int, "average_raid_size": int} | null
-  (stor open).raids.raider
-  | uniq
+  stor create -t raid_connections --columns {"raider": str, "target": str, "total_viewers": int, "raid_count": int, "average_raid_size": int} | ignore
+  stor open
+  | query db 'SELECT DISTINCT raider FROM raids'
+  | get raider
   | par-each {|raider|
-    for target in ((stor open).raids | where raider == $raider | get target | uniq) {
-      let raids = ((stor open).raids | where raider == $raider and target == $target)
+    for target in (stor open | query db 'SELECT DISTINCT target FROM raids WHERE raider = ?' -p [$raider]).target {
+      let raids = (stor open | query db 'SELECT * FROM raids WHERE raider = ? AND target = ?' -p [$raider, $target])
       {
         "raider": $raider, "target": $target,
         "total_viewers": ($raids.size | math sum)
         "raid_count": ($raids | length)
         "average_raid_size": ($raids.size | math avg | math round)
-      } | stor insert -t raid_connections | null
+      } | stor insert -t raid_connections | ignore
     }
-  } | null
+  } | ignore
 }
 
 def calculate_shoutout_connections []: nothing -> nothing {
   log info "Generating shoutout-connection cache.."
-  stor create -t shoutout_connections --columns {"author": str, "target": str, "shoutout_count": int} | null
-  (stor open).shoutouts.author
-  | uniq
+  stor create -t shoutout_connections --columns {"author": str, "target": str, "shoutout_count": int} | ignore
+  stor open
+  | query db 'SELECT DISTINCT author FROM shoutouts'
+  | get author
   | par-each {|author|
-    for target in ((stor open).shoutouts | where author == $author | get target | uniq) {
-      let raids = ((stor open).shoutouts | where author == $author and target == $target)
+    for target in (stor open | query db 'SELECT DISTINCT target FROM shoutouts WHERE author = ?' -p [$author]).target {
+      # let raids = ((stor open).shoutouts | where author == $author and target == $target)
+      let raids = (stor open | query db 'SELECT * FROM shoutouts WHERE author = ? AND target = ?' -p [$author, $target])
       {
         "author": $author, "target": $target,
         "shoutout_count": ($raids | length)
-      } | stor insert -t shoutout_connections | null
+      } | stor insert -t shoutout_connections | ignore
     }
-  } | null
+  } | ignore
 }
 
 def get_channel_data []: nothing -> nothing {
@@ -199,11 +204,9 @@ def get_channel_data []: nothing -> nothing {
     #stor open
     #| query db 'SELECT DISTINCT name FROM (SELECT DISTINCT (r.raider || r.target) AS name FROM raids r UNION SELECT DISTINCT lc.name FROM liked_channels lc)'
     #| get name
-    (stor open).raid_connections.raider
-    | append ((stor open).raid_connections.target)
-    | append ((stor open).liked_channels.name)
-    | append ((stor open).shoutout_connections.target)
-    | uniq
+    stor open
+    | query db 'SELECT name FROM liked_channels UNION SELECT target FROM raid_connections UNION SELECT raider FROM raid_connections UNION SELECT target FROM shoutout_connections'
+    | get name
     | chunks 100  # limit of channels you can check per request
   ) {
     if ($chunk | is-empty) { continue }
